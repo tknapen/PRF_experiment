@@ -54,9 +54,12 @@ standard_parameters = {
 # 'y':2}   # confirm color match y 
 
 response_button_signs = {
-        'f':-1,  # left 'less' answer  e
-        'j':1,   # right 'more' answer   b
-        'y':2}   # confirm color match y 
+        's':-3,  # left 'less' answer  e
+        'd':-2,   # right 'more' answer   b
+        'f':-1,   # confirm color match y         
+        'j':1,  # left 'less' answer  e
+        'k':2,   # right 'more' answer   b
+        'l':3}   # confirm color match y 
 # }      
 
 # screen_res = (1920,1080)

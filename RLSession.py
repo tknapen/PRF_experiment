@@ -25,9 +25,9 @@ if standard_parameters['mask_type'] == 0:
 import appnope
 appnope.nope()
 
-class PRFSession(EyelinkSession):
-    def __init__(self, subject_initials, index_number,scanner, tracker_on,task_type):
-        super(PRFSession, self).__init__( subject_initials, index_number)
+class RLSession(EyelinkSession):
+    def __init__(self, subject_number, index_number, scanner, tracker_on, task_type):
+        super(RLSession, self).__init__( subject_number, index_number )
 
         self.background_color = (np.array(BGC)/255*2)-1
         self.task = task_type
@@ -131,110 +131,203 @@ class PRFSession(EyelinkSession):
         self.response_button_signs = response_button_signs
 
         self.scanner = scanner
+        self.stim_orientations = np.linspace(0, 2*pi, 6, endpoint = False)
+        self.standard_vertices = [[0,0], 
+                            [self.standard_parameters['vertical_stim_size'], self.standard_parameters['horizontal_stim_size']/2.0], 
+                            [self.standard_parameters['vertical_stim_size'], -self.standard_parameters['horizontal_stim_size']/2.0]]
         # trials can be set up independently of the staircases that support their parameters
-        self.prepare_trials()
-        self.nr_staircases_ecc = standard_parameters['nr_staircases_ecc']
-        self.prepare_staircases()
+        if self.index_number == 0:
+            self.train_test = 'train'
+            self.create_training_trials()
+        elif self.index_number == 1:
+            self.train_test = 'test'
+            self.create_test_trials()
+        
 
-    def prepare_staircases(self):
-        # fix, color
-        self.initial_values = [1,2]
-        stepsizes = np.r_[np.array([1.0,1.0,0.5,0.5,0.25,0.25]), 0.25*np.ones((int(1e4)))]
+    def hues_for_subject_number(self):
+        """hues_for_subject_number determines, based on the subject number, 
+        the correspondences between hues and reward probabilities.
+        This is internalized as self.probs_to_hues_this_subject.
+        """
+        #all possible probability and colour orderings
+        prob_orderings = [[int('{0:03b}'.format(i)[j]) for j in range(3)] for i in range(8)] #possible reward probability orderings
+        hue_set_orderings = list(itertools.permutations([0,1,2], 3)) #possible colour set orderings 
+        #combine them 
+        probs_to_hues = []
+        for hso in hue_set_orderings:
+            for po in prob_orderings:
+                probs_to_hues.append(np.array([list(hso), po]).T)
+        probs_to_hues = np.array(probs_to_hues)
+        
+        #pick one combination 
+        self.probs_to_hues_this_subject = probs_to_hues[self.ppn_nr] #48 combinations of 8 reward prob orderings and 6 color set orderings
 
-        self.staircase_file_name = os.path.join(os.path.split(self.output_file)[0], self.subject_initials + '_prf_staircase.pickle')
-        if os.path.exists( self.staircase_file_name ):
-            with open(self.staircase_file_name) as f:
-                self.staircases = pickle.load(f)
-        else:
-            # create staircases
-            self.staircases = {}
-            for i, t in enumerate(['fix','bar']):
-                for j in range(self.nr_staircases_ecc):
-                    self.staircases.update({t + '_%i'%j:
-                                ThreeUpOneDownStaircase(initial_value = standard_parameters['quest_initial_stim_values'], 
-                                                             initial_stepsize=standard_parameters['quest_stepsize'],
-                                                             max_nr_trials = 5000,
-                                                             stepsize_multiplication_on_reversal = standard_parameters['quest_stepsize_multiplication_on_reversal'])  
-                                    })
-    
-    def prepare_trials(self):
+
+    def positions_for_subject_number(self):
+        """positions_for_subject_number determines, based on the subject number, 
+        the correspondences between positions and reward probabilities.
+        This is internalized as self.probs_to_hues_this_subject.
+        """
+
+        # three stimulus positions during learning, and two orderings: 6 stimulus 
+        position_set_orderings = list(itertools.permutations([0,1,2], 3))
+        sign_orderings = [[(int(o)*2)-1 for o in bin(x)[2:].zfill(3)] for x in range(8)]
+
+        #combine them 
+        probs_to_stims = []
+        for pso in position_set_orderings:
+            for po in sign_orderings:
+                probs_to_stims.append(np.array([list(pso), po]).T)
+        probs_to_stims = np.array(probs_to_stims)
+        
+        #pick one combination 
+        self.probs_to_stims_this_subject = probs_to_stims[self.ppn_nr] #48 combinations of 8 reward prob orderings and 6 color set orderings
+
+
+    def create_training_trials(self):
         """docstring for prepare_trials(self):"""
 
-        self.directions = np.linspace(0, 2.0 * pi, 8, endpoint = False)
+        # ranges
+        # amount_of_colors = range(6) 
+        # self.hues = (np.linspace(0,1,len(amount_of_colors), endpoint=False)).reshape(2,3).T
+        self.reward_probs = np.array([[0.80,0.20], [0.70,0.30], [0.60,0.40]])       #reward probability sets  
+
+        self.positions_for_subject_number()
+        #correct responses 
+        AB_correct = np.array(np.r_[np.ones(8), -np.ones(2)]) #80:20 chance to get positive feedback 
+        CD_correct = np.array(np.r_[np.ones(7), -np.ones(3)]) #70:30 chance to get positive feedback 
+        EF_correct = np.array(np.r_[np.ones(6), -np.ones(4)]) #60:40 chance to get positive feedback  
+        for responses in ([AB_correct, CD_correct, EF_correct]): 
+            np.random.shuffle(responses)
+        feedback = np.vstack([np.array([AB_correct, CD_correct, EF_correct]).T for i in range(10)]) #3x10x5 array of all feedback types 
+
         self.standard_parameters = standard_parameters
+        # durations of phases in each trial
+        self.standard_phase_durations = np.array([-0.0001, 0.5, 3.0, 0.25, 0.0001, 3.0]) # pre-stimulation, fixation, stimuli, choice, blank, feedback                 
 
+        # create trials
+        self.trials = []
 
-        # self.tasks = np.array(['bar', 'fix'])
+        for i in range(feedback.shape[1]):                  #3 color pair feedback sets --> iterate over three arrays                   
+            for j in range(feedback.shape[0]):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
+                params = self.standard_parameters
+                # randomize phase durations a bit
+                trial_phase_durations = np.copy(self.standard_phase_durations)
+                trial_phase_durations[1] += np.random.randn() * 0.2
+                trial_phase_durations[4] += 1.0 + np.random.randn() * 0.2                       
+                trial_phase_durations[5] += np.random.randn() * 0.2 #SD 0.1 geeft relatief stabiel feedback interval rond 3 seconde
 
-        # orientations, bar moves towards:
-        # 0: S      3: NW   6: E
-        # 1: SW     4: N    7: SE
-        # 2: W      5: NE
+                orientation = self.stim_orientations[self.probs_to_stims_this_subject[i][0]]
+                HR_location = self.probs_to_stims_this_subject[i][1]
+                feedback_if_HR_chosen = feedback[j, i]
+                feedback_if_1_chosen = HR_location * feedback_if_HR_chosen
 
-        if self.standard_parameters['practice']:
-            self.stim_bool = [1,1,1,1]
-            self.direction_indices = np.array([0,2,6,4])
-        else:
-            # nostim-top-left-bottom-right-nostim-top-left-bottom-right-nostim
-            # self.stim_bool = [0,1,1,1,1,0,1,1,1,1,0]
-            # self.direction_indices = np.array([0,4,2,0,6,0,4,2,0,6,0])
-            # nostim-bottom-left-nostim-right-top-nostim
-            self.stim_bool = [0,1,1,0,1,1,0]
-            self.direction_indices = np.array([0,0,2,0,6,4,0])
+                reward_probability_1 = self.reward_probs[self.probs_to_stims_this_subject[j][0], (self.probs_to_stims_this_subject[j][1]+1) /2]
+                reward_probability_2 = self.reward_probs[self.probs_to_stims_this_subject[j][0], (-self.probs_to_stims_this_subject[j][1]+1) /2]
 
-        self.trial_array = np.array([[self.direction_indices[i], self.stim_bool[i]] for i in range(len(self.stim_bool))])
+                params.update(
+                        {   
+                        # 'color_1': self.hues[hr_index[0], hr_index[1]], 
+                        # 'color_2': self.hues[lr_index[0], lr_index[1]], 
+                        'reward_probability_1': reward_probability_1, 
+                        'reward_probability_2': reward_probability_2,
+                        'orientation': orientation,
+                        'HR_location': HR_location,
+                        'feedback_if_HR_chosen': feedback_if_HR_chosen,
+                        'feedback_if_1_chosen': feedback_if_1_chosen,
+                        'eye_movement_error': 0,
+                        'answer': 0,
+                        'reward': 0,
+                        'reward_gained': 0,
+                        'reward_lost': 0
+                        }
+                    )
 
-        # get the RG/BY ratios
-        text_file_name = "data/%s_color_ratios.txt"%self.subject_initials
-        assert os.path.isfile(text_file_name), 'NO COLOR RATIO TEXT FILE PRESENT!!!!!!!!'
-        text_file = open(text_file_name, "r")
-        RG_BY_ratio = float(text_file.readline().split('ratio: ')[-1][:-1])
-        text_file.close()
-        if np.isnan(RG_BY_ratio):
-            RG_BY_ratio = 1
-        if RG_BY_ratio > 1:
-            self.standard_parameters['RG_color'] = 1
-            self.standard_parameters['BY_color'] = 1/RG_BY_ratio
-        else:
-            self.standard_parameters['BY_color'] = 1
-            self.standard_parameters['RG_color'] = 1/RG_BY_ratio
+                self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
+                self.counter += 1
+                self.total_duration += np.array(trial_phase_durations).sum()    
 
-        self.phase_durations = np.array([
-            -0.0001, # instruct time
-            -0.0001, # wait for scan pulse
-            self.standard_parameters['PRF_ITI_in_TR'] * self.standard_parameters['TR'] ])# for stim_dur in self.stim_durations])    # ITI
+        self.run_order = np.argsort(np.random.rand(len(self.trials))) #shuffle trials 
+        print str(self.counter) + '  trials generated. \nTotal net trial duration amounts to ' + str( self.total_duration/60 ) + ' min.'
 
+        # also define counters to run during the experiment
+        self.reward_counter = 0
+        self.loss_counter = 0   
+        self.slow_counter = 0 
+        self.correct_counter = 0 
+        self.eye_movement_counter = 0   
+
+        # and, stimuli that are identical across all trials
         # fixation point
         self.fixation_outer_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=40, pos = np.array((self.standard_parameters['x_offset'],0.0)), color = self.background_color, maskParams = {'fringeWidth':0.4})
         self.fixation_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=22, pos = np.array((self.standard_parameters['x_offset'],0.0)), color = (-1.0,-1.0,-1.0), maskParams = {'fringeWidth':0.4})
         self.fixation = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=17, pos = np.array((self.standard_parameters['x_offset'],0.0)), color = self.background_color, opacity = 1.0, maskParams = {'fringeWidth':0.4})
         
-        # mask
-        if self.standard_parameters['mask_type'] ==1:
-            draw_screen_space = [self.screen_pix_size[0]*self.standard_parameters['horizontal_stim_size'],self.screen_pix_size[1]*self.standard_parameters['vertical_stim_size']]
-            mask = np.ones((self.screen_pix_size[1],self.screen_pix_size[0]))*-1
-            x_edge = int(np.round((self.screen_pix_size[0]-draw_screen_space[0])/2))
-            y_edge = int(np.round((self.screen_pix_size[1]-draw_screen_space[1])/2))
-            if x_edge > 0:
-                mask[:,:x_edge] = 1
-                mask[:,-x_edge:] = 1
-            if y_edge > 0:
-                mask[-y_edge:,:] = 1
-                mask[:y_edge,:] = 1
-            import scipy
-            mask = scipy.ndimage.filters.gaussian_filter(mask,5)
-            self.mask_stim = visual.PatchStim(self.screen, mask=mask,tex=None, size=[self.screen_pix_size[0],self.screen_pix_size[1]], pos = np.array((self.standard_parameters['x_offset'],0.0)), color = self.screen.background_color) # 
-        elif self.standard_parameters['mask_type'] == 0:
-            mask = filters.makeMask(matrixSize = self.screen_pix_size[0], shape='raisedCosine', radius=self.standard_parameters['vertical_stim_size']*self.screen_pix_size[1]/self.screen_pix_size[0]/2, center=(0.0, 0.0), range=[1, -1], fringeWidth=0.1 )
-            self.mask_stim = visual.PatchStim(self.screen, mask=mask,tex=None, size=[self.screen_pix_size[0]*2,self.screen_pix_size[0]*2], pos = np.array((self.standard_parameters['x_offset'],0.0)), color = self.screen.background_color) # 
-    
+        self.RL_stim_1 = visual.ShapeStim(win=self.screen, vertices=standard_vertices, closeShape=True, lineWidth=5, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=0 )
+        self.RL_stim_2 = visual.ShapeStim(win=self.screen, vertices=standard_vertices, closeShape=True, lineWidth=5, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=180 )
+
+        self.pos_FB_stim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=17, pos = np.array((self.standard_parameters['x_offset'],0.0)), color = [-1,1,-1], opacity = 1.0, maskParams = {'fringeWidth':0.4})
+        self.neg_FB_stim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=17, pos = np.array((self.standard_parameters['x_offset'],0.0)), color = [1,-1,-1], opacity = 1.0, maskParams = {'fringeWidth':0.4})
+        self.no_FB_stim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=17, pos = np.array((self.standard_parameters['x_offset'],0.0)), color = [-1,-1,-1], opacity = 1.0, maskParams = {'fringeWidth':0.4})
+
+
+    def create_test_trials(self, index_number=1):   
+        # create trials
+        self.trials = []
+
+        # ranges
+        self.reward_probs = np.array([[0.80,0.20], [0.70,0.30], [0.60,0.40]])       #reward probability sets  
+
+        self.positions_for_subject_number()
+
+        mapping = np.array([[self.hues[pa[0], pa[1]] for pa in self.probs_to_hues_this_subject], [self.hues[pa[0], 1-pa[1]] for pa in self.probs_to_hues_this_subject]]).T
+
+        # ranges    
+        self.test_hues = np.linspace(0,1,len(amount_of_colors), endpoint=False)         #all possible colours, no standard pairs anymore 
+        self.test_combinations = list(itertools.combinations(range(6), 2))              #15 possible combinations of 2 colour sets, approx 26 minutes
+
+        #standard settings      
+        self.standard_phase_durations = np.array([-0.0001, 0.5, 3.0, 0.25, 0.0001, 2.0]) # pre-stimulation, fixation, gratings, choice, blank, feedback 
+        self.xposition = np.array([1, -1])  #grating 1 left side, grating 1 right side 
+
+        self.counter = 0
+        self.total_duration = 0
+
+        for i in range(len(self.test_combinations)):                            #15  iterations -> iterate over possible test combinations
+            for k in range(self.xposition.shape[0]):                            #2   iterations -> present stimuli on both sides equally often
+                for l in range(12):                                             #12  iterations -> in total 360 trials 
+                    params = self.standard_parameters
+                    # randomize phase durations a bit
+                    trial_phase_durations = np.copy(self.standard_phase_durations)
+                    trial_phase_durations[5] += np.random.randn() * 0.4
+                    #print trial_phase_durations
+                    params.update(
+                            {   
+                            'color_1': self.test_hues[self.test_combinations[i][0]], 
+                            'color_2': self.test_hues[self.test_combinations[i][1]], 
+                            'reward_probability_1': self.reward_probs[mapping == self.test_hues[self.test_combinations[i][0]]],
+                            'reward_probability_2': self.reward_probs[mapping == self.test_hues[self.test_combinations[i][1]]],
+                            'xposition': self.xposition[k],
+                            'feedback_direction': 0.0
+                            }
+                        )
+
+                    self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
+                    self.counter += 1
+                    self.total_duration += np.array(trial_phase_durations).sum()    
+                                
+        self.run_order = np.argsort(np.random.rand(len(self.trials))) #shuffle trials 
+        print str(self.counter) + ' test trials generated. \nTotal net trial duration amounts to ' + str( self.total_duration/60 ) + ' min.'
+
+        # also define counters to run during the experiment
+        self.reward_counter = 0
+        self.loss_counter = 0   
+        self.slow_counter = 0
+        self.eye_movement_counter = 0   
+
     def close(self):
-        super(PRFSession, self).close()
-        with open(self.staircase_file_name, 'w') as f:
-            pickle.dump(self.staircases, f)
-        # for s in self.staircases.keys():
-            # print 'Staircase {}'.format(s)
-            # self.staircases[s].printAsText()
+        super(RLSession, self).close()
+        # some more code here.
         
     
     def run(self):

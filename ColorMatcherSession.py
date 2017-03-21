@@ -21,8 +21,8 @@ import appnope
 appnope.nope()
 
 class ColorMatcherSession(EyelinkSession):
-    def __init__(self, subject_initials, index_number, scanner, tracker_on):
-        super(ColorMatcherSession, self).__init__( subject_initials, index_number)
+    def __init__(self, subject_number, index_number, scanner, tracker_on):
+        super(ColorMatcherSession, self).__init__( subject_number, index_number)
         
         self.background_color = (np.array(BGC)/255*2)-1
 
@@ -85,7 +85,7 @@ class ColorMatcherSession(EyelinkSession):
     
     def close(self):
         super(ColorMatcherSession, self).close()
-        text_file = open("data/%s_color_ratios.txt"%self.subject_initials, "w")
+        text_file = open("data/%s_color_ratios.txt"%self.subject_number, "w")
         text_file.write('Mean RG/BY ratio: %.2f\nStdev RG/BY ratio: %.2f'%(np.mean(np.array(self.all_color_values)/self.standard_parameters['BY_comparison_color']),np.std(np.array(self.all_color_values)/self.standard_parameters['BY_comparison_color'])))
         text_file.close()
     

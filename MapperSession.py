@@ -23,8 +23,8 @@ import appnope
 appnope.nope()
 
 class MapperSession(EyelinkSession):
-    def __init__(self, subject_initials, index_number, scanner, tracker_on):
-        super(MapperSession, self).__init__( subject_initials, index_number)
+    def __init__(self, subject_number, index_number, scanner, tracker_on):
+        super(MapperSession, self).__init__( subject_number, index_number)
         
         self.background_color = (np.array(BGC)/255*2)-1
 
@@ -36,7 +36,7 @@ class MapperSession(EyelinkSession):
         self.standard_parameters = standard_parameters
         self.response_button_signs = response_button_signs
 
-        text_file_name = "data/%s_color_ratios.txt"%self.subject_initials
+        text_file_name = "data/%s_color_ratios.txt"%self.subject_number
         assert os.path.isfile(text_file_name), 'NO COLOR RATIO TEXT FILE PRESENT!!!!!!!!'
         text_file = open(text_file_name, "r")
         RG_BY_ratio = float(text_file.readline().split('ratio: ')[-1][:-1])
@@ -157,7 +157,7 @@ class MapperSession(EyelinkSession):
     # def prepare_staircases(self):
     #     # staircases
     #     self.initial_value = 2 # for self.unique_tasks, 
-    #     self.staircase_file_name = os.path.join(os.path.split(self.output_file)[0], self.subject_initials + '_mapper_staircases.pickle')
+    #     self.staircase_file_name = os.path.join(os.path.split(self.output_file)[0], self.subject_number + '_mapper_staircases.pickle')
     #     if os.path.exists( self.staircase_file_name ):
     #         with open(self.staircase_file_name) as f:
     #             self.staircases = pickle.load(f)
@@ -182,7 +182,7 @@ class MapperSession(EyelinkSession):
         self.initial_value = 2
         stepsizes = np.r_[np.array([1.0,1.0,0.5,0.5,0.25,0.25]), 0.25*np.ones((1e4))]
 
-        self.staircase_file_name = os.path.join(os.path.split(self.output_file)[0], self.subject_initials + '_mapper_staircases.pickle')
+        self.staircase_file_name = os.path.join(os.path.split(self.output_file)[0], self.subject_number + '_mapper_staircases.pickle')
         if os.path.exists( self.staircase_file_name ):
             with open(self.staircase_file_name) as f:
                 self.staircases = pickle.load(f)

@@ -39,9 +39,9 @@ from IPython import embed as shell
 
 class Session(object):
     """Session is a main class that creates screen and file properties"""
-    def __init__(self, subject_initials, index_number):
+    def __init__(self, subject_number, index_number):
         super(Session, self).__init__()
-        self.subject_initials = subject_initials
+        self.subject_number = subject_number
         self.index_number = index_number
         
         # self.setup_sound_system()
@@ -132,7 +132,7 @@ class Session(object):
         if not os.path.isdir(data_directory):
             os.mkdir(data_directory)
             
-        self.output_file = os.path.join(data_directory, self.subject_initials + '_' + str(self.index_number) + '_' + opfn )
+        self.output_file = os.path.join(data_directory, self.subject_number + '_' + str(self.index_number) + '_' + opfn )
     
     def open_input_file(self):
         """
@@ -210,8 +210,8 @@ class Session(object):
 
 class EyelinkSession(Session):
     """docstring for EyelinkSession"""
-    def __init__(self, subject_initials, index_number):
-        super(EyelinkSession, self).__init__(subject_initials, index_number)
+    def __init__(self, subject_number, index_number):
+        super(EyelinkSession, self).__init__(subject_number, index_number)
     
     def create_tracker(self, tracker_on = True, sensitivity_class = 0, split_screen = False, screen_half = 'L', auto_trigger_calibration = 1, calibration_type = 'HV9', sample_rate = 500):
         """
@@ -222,8 +222,8 @@ class EyelinkSession(Session):
 
         import string
         randstr = ''.join(np.random.choice(np.array([s for s in string.ascii_lowercase+string.digits]),3))
-        #self.eyelink_temp_file = self.subject_initials[:2] + '_' + str(self.index_number) + '_' + str(np.random.randint(99)) + '.edf'
-        self.eyelink_temp_file = self.subject_initials[:2] + str(self.index_number) + '_' + randstr + '.edf'
+        #self.eyelink_temp_file = self.subject_number[:2] + '_' + str(self.index_number) + '_' + str(np.random.randint(99)) + '.edf'
+        self.eyelink_temp_file = self.subject_number[:2] + str(self.index_number) + '_' + randstr + '.edf'
         # self.tracker.openDataFile(self.eyelink_temp_file)
 
 
@@ -476,8 +476,8 @@ class StarStimSession(EyelinkSession):
     It assumes an active recording, using NIC already connected over bluetooth.
     Triggers land in the file that's already set up and recording.
     """
-    def __init__(self, subject_initials, index_number, connect_to_starstim = False, TCP_IP = '10.0.1.201', TCP_PORT = 1234):
-        super(StarStimSession, self).__init__(subject_initials, index_number)
+    def __init__(self, subject_number, index_number, connect_to_starstim = False, TCP_IP = '10.0.1.201', TCP_PORT = 1234):
+        super(StarStimSession, self).__init__(subject_number, index_number)
         self.setup_starstim_connection(TCP_IP = TCP_IP, TCP_PORT = TCP_PORT, connect_to_starstim = connect_to_starstim)
 
     def setup_starstim_connection(self, TCP_IP = '10.0.1.201', TCP_PORT = 1234, connect_to_starstim = True):
