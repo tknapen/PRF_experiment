@@ -33,18 +33,19 @@ class RLTrial(Trial):
         elif self.phase == 3:
             self.session.fixation.setColor((1,1,1))
             self.session.RL_stim_1.draw()
-            self.session.RL_stim_2.draw()
+            if self.parameters['orientation_2'] >= 0:
+                self.session.RL_stim_2.draw()
         elif self.phase == 5:
             if self.parameters['correct'] == -1:
                 self.session.no_FB_stim.draw()
-            if self.session.train_test == 'train:':
-                if (bool(self.parameters['correct']) and bool(self.parameters['feedback_if_HR_chosen'])):
+            if self.session.train_test == 'train':
+                if (self.parameters['correct'] == 1) & (self.parameters['feedback_if_HR_chosen'] == 1):
                     self.session.pos_FB_stim.draw()
-                elif (bool(self.parameters['correct']) and not bool(self.parameters['feedback_if_HR_chosen'])):
+                elif (self.parameters['correct'] == 1) & (self.parameters['feedback_if_HR_chosen'] == 0):
                     self.session.neg_FB_stim.draw()
-                elif (not bool(self.parameters['correct']) and bool(self.parameters['feedback_if_HR_chosen'])):
+                elif (self.parameters['correct'] == 0) & (self.parameters['feedback_if_HR_chosen'] == 1):
                     self.session.neg_FB_stim.draw()
-                elif (not bool(self.parameters['correct']) and not bool(self.parameters['feedback_if_HR_chosen'])):
+                elif (self.parameters['correct'] == 0) & (self.parameters['feedback_if_HR_chosen'] == 0):
                     self.session.pos_FB_stim.draw()
 
         super(RLTrial, self).draw()
@@ -81,18 +82,28 @@ class RLTrial(Trial):
                             if self.session.response_button_signs[ev] not in [self.parameters['orientation_1'], self.parameters['orientation_2']]:
                                 self.parameters['correct'] = -1
                             # feedback bookkeeping
-                            if self.parameters['answer'] == self.parameters['HR_orientation']:
-                                self.parameters['reward'] = 1
-                                self.parameters['reward_gained'] = standard_parameters['win_amount']
-                                self.parameters['reward_lost'] = 0.0
-                                self.session.reward_counter += standard_parameters['win_amount']
-                            else:
-                                self.parameters['reward'] = 0
-                                self.parameters['reward_gained'] = 0.0
-                                self.parameters['reward_lost'] = standard_parameters['loss_amount']
-                                self.session.loss_counter += standard_parameters['loss_amount']
-
-        
+                            if self.session.train_test == 'train':
+                                if (self.parameters['correct'] == 1) & (self.parameters['feedback_if_HR_chosen'] == 1):
+                                    self.parameters['reward'] = 1
+                                    self.parameters['reward_gained'] = standard_parameters['win_amount']
+                                    self.parameters['reward_lost'] = 0.0
+                                    self.session.reward_counter += standard_parameters['win_amount']
+                                elif (self.parameters['correct'] == 1) & (self.parameters['feedback_if_HR_chosen'] == 0):
+                                    self.parameters['reward'] = 0
+                                    self.parameters['reward_gained'] = 0.0
+                                    self.parameters['reward_lost'] = standard_parameters['loss_amount']
+                                    self.session.loss_counter += standard_parameters['loss_amount']
+                                elif (self.parameters['correct'] == 0) & (self.parameters['feedback_if_HR_chosen'] == 1):
+                                    self.parameters['reward'] = 0
+                                    self.parameters['reward_gained'] = 0.0
+                                    self.parameters['reward_lost'] = standard_parameters['loss_amount']
+                                    self.session.loss_counter += standard_parameters['loss_amount']
+                                elif (self.parameters['correct'] == 0) & (self.parameters['feedback_if_HR_chosen'] == 0):
+                                    self.parameters['reward'] = 1
+                                    self.parameters['reward_gained'] = standard_parameters['win_amount']
+                                    self.parameters['reward_lost'] = 0.0
+                                    self.session.reward_counter += standard_parameters['win_amount']
+       
             super(RLTrial, self).key_event( ev )
 
     def run(self, ID = 0):
@@ -133,7 +144,6 @@ class RLTrial(Trial):
             if self.phase == 4:
                 self.response_time = self.session.clock.getTime()
                 if ( self.response_time - self.stimulus_time ) > self.phase_durations[4]:
-                    print self.parameters
                     self.phase_forward()
             # FB
             if self.phase == 5:

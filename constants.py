@@ -8,6 +8,7 @@ standard_parameters = {
     'grace_period':                             4.,         # rest before and after experiment (fMRI) 
     'nr_stim_repetitions_per_run_train':        3,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_test':         6,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_mapper':       10,         # number of repetitions per run, of the 6-trial sequences that fully define the probabilities.
     
     ## spatial dimensions:
     'eyelink_calib_size':                       0.5,       # portion of screen heigth    

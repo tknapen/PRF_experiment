@@ -155,6 +155,9 @@ class RLSession(EyelinkSession):
         elif self.index_number == 1:
             self.train_test = 'test'
             self.create_test_trials()
+        elif self.index_number == -1:
+            self.train_test = 'train' # mapper gives you feedback, at least for the pupil experiment.
+            self.create_mapper_trials()
         
 
     def hues_for_subject_number(self):
@@ -245,7 +248,7 @@ class RLSession(EyelinkSession):
 
                 params.update(
                         {   
-                        'color_1': 180, 
+                        'color_1': 0, 
                         'color_2': 0, 
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
@@ -373,6 +376,76 @@ class RLSession(EyelinkSession):
         this_instruction_string = """Now we're going to test what you've learned!\nYou will not get any feedback anymore, so please choose the figure that 'feels best'."""
         self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
 
+
+    def create_mapper_trials(self, index_number=1):   
+
+        self.standard_parameters = standard_parameters              
+
+        # create trials
+        self.trials = []
+
+        self.trial_counter, self.total_duration = 0, 0
+        for i in range(len(self.stim_orientations)):                  #3 stimulus pair feedback sets --> iterate over three arrays                   
+            for j in range(standard_parameters['nr_stim_repetitions_per_run_mapper']):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
+                params = self.standard_parameters
+                # randomize phase durations NOT!
+                trial_phase_durations = np.copy(np.array(standard_phase_durations))
+                trial_phase_durations[4] = 1.5                      
+                trial_phase_durations[5] = 0.75                       
+                trial_phase_durations[6] = 0.75 # np.random.randn()*1.0 #SD 0.1 geeft relatief stabiel feedback interval rond 3 seconde
+
+                feedback_if_HR_chosen = 1
+                orientation_1 = self.stim_orientations[i]
+                orientation_2 = -1
+                HR_orientation = orientation_1
+
+                params.update(
+                        {   
+                        'color_1': 0, 
+                        'color_2': 0, 
+                        'reward_probability_1': 0, 
+                        'reward_probability_2': 0,
+                        'orientation_1': orientation_1,
+                        'orientation_2': orientation_2,
+                        'HR_orientation': HR_orientation,
+                        'feedback_if_HR_chosen': feedback_if_HR_chosen,
+                        'eye_movement_error': 0,
+                        'answer': -1,
+                        'correct': -1,
+                        'reward': 0,
+                        'reward_gained': 0,
+                        'reward_lost': 0,
+                        'rt': 0,
+                        }
+                    )
+
+                self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
+                self.trial_counter += 1
+                self.total_duration += np.array(trial_phase_durations).sum()    
+
+        print str(self.trial_counter) + '  trials generated. \nTotal net trial duration amounts to ' + str( self.total_duration/60 ) + ' min.'
+
+        # shuffle trials
+        self.run_order = np.arange(len(self.trials))
+        np.random.shuffle(self.run_order) #shuffle trials 
+        self.trials = [self.trials[i] for i in self.run_order]
+
+        # set up grace periods in first and last trial
+        self.trials[0].phase_durations[1] = standard_parameters['grace_period']
+        self.trials[-1].phase_durations[-1] = standard_parameters['grace_period']
+
+        # also define counters to run during the experiment
+        self.reward_counter = 0
+        self.loss_counter = 0   
+        self.slow_counter = 0 
+        self.correct_counter = 0 
+        self.eye_movement_counter = 0   
+
+        this_instruction_string = """Respond as quickly as possible by pushing the correct button for the appearing stimulus."""
+        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
+
+
+
     def close(self):
         super(RLSession, self).close()
         # some more code here.
@@ -387,8 +460,13 @@ class RLSession(EyelinkSession):
             if self.stopped == True:
                 break
 
+            # drop out after 20 trials for practice subject number 0
+            if self.subject_number == 0 and i == 20:
+                self.stopped = True
+                break
 
-        if self.train_test == 'train':
+
+        if self.index_number == 0:
             this_feedback_string = """During this run, your total reward is {ac} points.\nYou missed the stimulus {sc} times.""".format(
                                 ac=self.reward_counter + self.loss_counter,
                                 sc=self.slow_counter
