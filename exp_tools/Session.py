@@ -19,10 +19,6 @@ from math import *
 
 from psychopy import visual, core, event, misc
 
-# import VisionEgg
-# VisionEgg.start_default_logging(); VisionEgg.watch_exceptions()
-# 
-# from VisionEgg.Core import *
 import pygame
 from pygame.locals import *
 from scipy.io import wavfile
@@ -132,7 +128,7 @@ class Session(object):
         if not os.path.isdir(data_directory):
             os.mkdir(data_directory)
             
-        self.output_file = os.path.join(data_directory, self.subject_number + '_' + str(self.index_number) + '_' + opfn )
+        self.output_file = os.path.join(data_directory, str(self.subject_number) + '_' + str(self.index_number) + '_' + opfn )
     
     def open_input_file(self):
         """
@@ -223,7 +219,7 @@ class EyelinkSession(Session):
         import string
         randstr = ''.join(np.random.choice(np.array([s for s in string.ascii_lowercase+string.digits]),3))
         #self.eyelink_temp_file = self.subject_number[:2] + '_' + str(self.index_number) + '_' + str(np.random.randint(99)) + '.edf'
-        self.eyelink_temp_file = self.subject_number[:2] + str(self.index_number) + '_' + randstr + '.edf'
+        self.eyelink_temp_file = str(self.subject_number).zfill(2)[:2] + str(self.index_number) + '_' + randstr + '.edf'
         # self.tracker.openDataFile(self.eyelink_temp_file)
 
 

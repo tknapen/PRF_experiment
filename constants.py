@@ -4,63 +4,38 @@ from __future__ import division
 # standard parameters
 standard_parameters = {
     
-    'practice':                         0,
-    ## spatial dimensions:
-    'eyelink_calib_size':               0.5,       # portion of screen heigth
-    'mask_type':                        1,         # 0: circle, 1: square
-    'vertical_stim_size':               1,            # portion of horizontal screen space covered
-    'horizontal_stim_size':             1,         # when wanting a circular mask, set this to screen_size[1]/screen_size[0]
-    'x_offset':                         0,          # when wanting a circular mask, x-offset
-    'bar_width_ratio':                  0.1,        # portion of screen height
+    'practice':                                 0,
+    'grace_period':                             4.,         # rest before and after experiment (fMRI) 
+    'nr_stim_repetitions_per_run_train':        3,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_test':         6,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
     
-    ## temporal dimensions:
-    ## common parameters:    # 351 dyns
-    'num_elements':                     2000,        # amount of elements in bar, this will be num_elements * (1/bar_width_ratio) = 8000 for Mapper
-    'vertical_pass_dur':                49,        # that is 24*1.5=36 sec, which is 15/24 = 0.625 degree per step
-    'horizontal_pass_dur':              49,
-    'nr_staircases_ecc':                3,
-    'PRF_ITI_in_TR':                    0.5,        # fill in 0.5 less than wanted to accomodate for t waiting
-    'TR':                               0.945,        # VERY IMPORTANT TO FILL IN AFTER PLANNING IN!            
-    'redraws_per_TR' :                  3.0,        # TR/redraws_per_TR is the length of the transients, in this case 500 ms: #used e
-    'fast_speed':                       7.0,        # speed of the fast elements for TK/DE/JW: 6, for JS/SN/NA: 7
-    'slow_speed':                       3.0,        # speed of the slow elements for TK/DE/JW: 4, for JS/SN/NA: 3
-    'element_size':                     35.0,        # size of the elements # used: 35
-    'element_spatial_frequency':        0.5,        # sf of the elemenets # used: 2
+    ## spatial dimensions:
+    'eyelink_calib_size':                       0.5,       # portion of screen heigth    
+    'x_offset':                                 0.0,
+    'y_offset':                                 0.0,
 
-    ## stim feature params
-    'num_elements':                     2000,       # amount of elements in bar, this will be num_elements * (1/bar_width_ratio) = 8000 for Mapper
-    'fast_speed':                       7.0,        # speed of the fast elements for TK/DE/JW: 6, for JS/SN/NA: 7
-    'num_fns_trials':                   4,        # speaks for itself
+    'vertical_stim_size':                       100.0,
+    'horizontal_stim_size':                     2000.0,
+    'stim_fix_distance':                        20.0,
+    'TR':                                       0.945,                 
 
-    ## mapper variables:
-    'mapper_stim_in_TR':                1.0,        # duration of mapper stimulus in TRs
-    'minimum_pulse_gap':                2.0,
-    'warming_up_n_TRs':                 18,
-    'mapper_task_rate':                 4,
+    # stimulus variables:
+    'feedback_height':                          35,
+    'win_amount':                               10,
+    'loss_amount':                              1,
 
-    ## Color matcher variables:
-    'num_trials':                       10,        # amount of matcher trials
-    'BY_comparison_color':              0.5,        # color to compare to; 0.5 is best.
+} 
 
-    # staircase variables:
-    'quest_initial_stim_values':        1,
-    'quest_stepsize':                   0.75,
-    'quest_stepsize_multiplication_on_reversal': 0.95
-}
-
-# response_button_signs = {
-# 'e':-1,  # left 'less' answer  e
-# 'b':1,   # right 'more' answer   b
-# 'y':2}   # confirm color match y 
+standard_phase_durations = [-0.0001, -0.0001, 0.5, 0.3, 3, 0.75, 3.0]
 
 response_button_signs = {
-        's':-3,  # left 'less' answer  e
-        'd':-2,   # right 'more' answer   b
-        'f':-1,   # confirm color match y         
-        'j':1,  # left 'less' answer  e
-        'k':2,   # right 'more' answer   b
-        'l':3}   # confirm color match y 
-# }      
+        's':240,
+        'd':180,
+        'f':120,
+        'j':60,
+        'k':0,
+        'l':300
+        }
 
 # screen_res = (1920,1080)
 # background_color = (0.5,0.5,0.5)#-0.75,-0.75,-0.75)
