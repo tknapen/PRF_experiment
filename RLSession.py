@@ -21,9 +21,12 @@ from Staircase import ThreeUpOneDownStaircase
 from RLTrial import *
 from constants import *
 
-import appnope
-appnope.nope()
-
+try: 
+	import appnope
+	appnope.nope()
+except: 
+	print 'APPNOPE NOT ACTIVE!'
+	
 class RLSession(EyelinkSession):
     def __init__(self, subject_number, index_number, scanner, tracker_on):
         super(RLSession, self).__init__( subject_number, index_number )
@@ -126,7 +129,8 @@ class RLSession(EyelinkSession):
         else:
             self.create_tracker(tracker_on = False)
         
-        self.response_button_signs = response_button_signs
+        self.response_button_signs = response_button_signs; 
+        self.subject_number = int(subject_number)
 
         self.scanner = scanner
         self.stim_orientations = np.linspace(0, 360, 6, endpoint = False)
@@ -196,9 +200,9 @@ class RLSession(EyelinkSession):
                 probs_to_stims.append(np.array([list(pso), po]).T)
         probs_to_stims = np.array(probs_to_stims)
         
-        #pick one combination 
+	  #pick one combination 
         self.probs_to_stims_this_subject = probs_to_stims[self.subject_number] #48 combinations of 8 reward prob orderings and 6 color set orderings
-
+        
 
     def create_training_trials(self):
         """docstring for prepare_trials(self):"""
@@ -460,8 +464,8 @@ class RLSession(EyelinkSession):
             if self.stopped == True:
                 break
 
-            # drop out after 20 trials for practice subject number 0
-            if self.subject_number == 0 and i == 20:
+            # drop out after 12 trials for practice subject number 0
+            if (self.subject_number == 0) and (i == 12):
                 self.stopped = True
                 break
 
@@ -479,5 +483,6 @@ class RLSession(EyelinkSession):
 
 
         self.close()
+        
     
 

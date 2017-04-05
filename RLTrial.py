@@ -59,7 +59,7 @@ class RLTrial(Trial):
                     self.session.stopped = True
                     print 'run canceled by user'
                 # it handles both numeric and lettering modes 
-                elif ev == ' ':
+                elif ev in ['space', ' ']:
                     self.events.append([0,self.session.clock.getTime()-self.start_time])
                     if self.phase == 0:
                         self.phase_forward()
@@ -103,6 +103,8 @@ class RLTrial(Trial):
                                     self.parameters['reward_gained'] = standard_parameters['win_amount']
                                     self.parameters['reward_lost'] = 0.0
                                     self.session.reward_counter += standard_parameters['win_amount']
+				
+																															
        
             super(RLTrial, self).key_event( ev )
 

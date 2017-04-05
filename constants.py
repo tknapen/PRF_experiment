@@ -5,10 +5,10 @@ from __future__ import division
 standard_parameters = {
     
     'practice':                                 0,
-    'grace_period':                             4.,         # rest before and after experiment (fMRI) 
-    'nr_stim_repetitions_per_run_train':        3,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
+    'grace_period':                             4.,        # rest before and after experiment (fMRI) 
+    'nr_stim_repetitions_per_run_train':        2,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_test':         6,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
-    'nr_stim_repetitions_per_run_mapper':       10,         # number of repetitions per run, of the 6-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_mapper':       10,        # number of repetitions per run, of the 6-trial sequences that fully define the probabilities.
     
     ## spatial dimensions:
     'eyelink_calib_size':                       0.5,       # portion of screen heigth    
@@ -22,20 +22,28 @@ standard_parameters = {
 
     # stimulus variables:
     'feedback_height':                          35,
-    'win_amount':                               10,
-    'loss_amount':                              1,
+    'win_amount':                               0.1,
+    'loss_amount':                              0,
 
 } 
 
-standard_phase_durations = [-0.0001, -0.0001, 0.5, 0.3, 3, 0.75, 3.0]
+standard_phase_durations = [-0.0001, -0.0001, 0.5, 0.5, 3, 1.0, 3.0]
 
+#response_button_signs = {
+#       's':240,
+#       'd':180,
+#       'f':120,
+#       'j':60,
+#       'k':0,
+#       'l':300
+#        }
 response_button_signs = {
-        's':240,
+        'e':240,
         'd':180,
-        'f':120,
-        'j':60,
-        'k':0,
-        'l':300
+        'c':120,
+        'n':60,
+        'j':0,
+        'i':300
         }
 
 # screen_res = (1920,1080)
