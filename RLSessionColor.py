@@ -9,12 +9,8 @@ import time as time_module
 import os, sys, time, pickle
 import pygame
 from pygame.locals import *
-# from pygame import mixer, time
-
-# import Quest
 
 sys.path.append( 'exp_tools' )
-# sys.path.append( os.environ['EXPERIMENT_HOME'] )
 
 from Session import *
 from Staircase import ThreeUpOneDownStaircase
@@ -27,9 +23,9 @@ try:
 except: 
 	print 'APPNOPE NOT ACTIVE!'
 	
-class RLSession(EyelinkSession):
+class RLSessionColor(EyelinkSession):
     def __init__(self, subject_number, index_number, scanner, tracker_on):
-        super(RLSession, self).__init__( subject_number, index_number )
+        super(RLSessionColor, self).__init__( subject_number, index_number )
 
         self.background_color = (np.array(BGC)/255*2)-1
 
@@ -162,26 +158,17 @@ class RLSession(EyelinkSession):
         elif self.index_number == -1:
             self.train_test = 'train' # mapper gives you feedback, at least for the pupil experiment.
             self.create_mapper_trials()
-        
+        elif self.index_number == -2:
+            self.train_test = 'train' # mapper gives you feedback, at least for the pupil experiment.
+            standard_phase_durations[3] = 1.5
+            self.create_mapper_trials()
 
-    def hues_for_subject_number(self):
-        """hues_for_subject_number determines, based on the subject number, 
-        the correspondences between hues and reward probabilities.
-        This is internalized as self.probs_to_hues_this_subject.
-        """
-        #all possible probability and colour orderings
-        prob_orderings = [[int('{0:03b}'.format(i)[j]) for j in range(3)] for i in range(8)] #possible reward probability orderings
-        hue_set_orderings = list(itertools.permutations([0,1,2], 3)) #possible colour set orderings 
-        #combine them 
-        probs_to_hues = []
-        for hso in hue_set_orderings:
-            for po in prob_orderings:
-                probs_to_hues.append(np.array([list(hso), po]).T)
-        probs_to_hues = np.array(probs_to_hues)
-        
-        #pick one combination 
-        self.probs_to_hues_this_subject = probs_to_hues[self.subject_number] #48 combinations of 8 reward prob orderings and 6 color set orderings
-
+        # also define counters to run during the experiment
+        self.reward_counter = 0
+        self.loss_counter = 0   
+        self.slow_counter = 0 
+        self.correct_counter = 0 
+        self.eye_movement_counter = 0  
 
     def positions_for_subject_number(self):
         """positions_for_subject_number determines, based on the subject number, 
@@ -203,6 +190,25 @@ class RLSession(EyelinkSession):
 	  #pick one combination 
         self.probs_to_stims_this_subject = probs_to_stims[self.subject_number] #48 combinations of 8 reward prob orderings and 6 color set orderings
         
+
+    def setup_empty_trials(self):
+        """setup_empty_trials adds inter-trial intervals to an already created list of trials.
+        """
+        # set up empty trials
+        nr_total_trials = len(self.trials)
+        nr_empty_trials = int(round(standard_parameters['ratio_empty_trials'] * nr_total_trials))
+        empty_trial_interval = round(nr_total_trials / nr_empty_trials)
+
+        empty_trial_indices = np.linspace(empty_trial_interval,nr_total_trials,nr_empty_trials, endpoint = False).astype(int)
+        empty_trial_indices += np.random.randint(-2,2, nr_empty_trials)
+
+        for eti in empty_trial_indices:
+            self.trials[eti].phase_durations[-1] += standard_parameters['empty_trial_duration']
+
+        # set up grace periods in first and last trial
+        self.trials[0].phase_durations[1] = standard_parameters['initial_grace_period']
+        self.trials[-1].phase_durations[-1] = standard_parameters['final_grace_period']
+
 
     def create_training_trials(self):
         """docstring for prepare_trials(self):"""
@@ -226,24 +232,26 @@ class RLSession(EyelinkSession):
         # create trials
         self.trials = []
 
-        # self.screen.close()
-        # shell()
-        self.trial_counter, self.total_duration = 0, 0
+        self.trial_counter = 0
         for i in range(feedback.shape[1]):                  #3 stimulus pair feedback sets --> iterate over three arrays                   
             for j in range(feedback.shape[0]):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
                 params = self.standard_parameters
                 # randomize phase durations a bit
                 trial_phase_durations = np.copy(np.array(standard_phase_durations))
-                # trial_phase_durations[5] += 1.0                       
-                trial_phase_durations[6] += np.random.randn()*1.0 #SD 0.1 geeft relatief stabiel feedback interval rond 3 seconde
+                trial_phase_durations[2] += np.random.exponential(self.standard_parameters['fix_alert_exp_mean'])                
+                trial_phase_durations[4] += np.random.exponential(self.standard_parameters['response_feedback_exp_mean'])
 
                 feedback_if_HR_chosen = feedback[j, i]
 
                 reward_probability_1 = self.reward_probs[self.probs_to_stims_this_subject[i][0], int((self.probs_to_stims_this_subject[i][1]+1)/2)]
                 reward_probability_2 = self.reward_probs[self.probs_to_stims_this_subject[i][0], int((-self.probs_to_stims_this_subject[i][1]+1)/2)]
 
-                orientation_1 = self.stim_orientations[self.probs_to_stims_this_subject[i][0]]
-                orientation_2 = self.stim_orientations[self.probs_to_stims_this_subject[i][0]] + 180
+                this_orientation = np.random.randint(0,6)
+                orientation_1 = self.stim_orientations[this_orientation]
+                orientation_2 = (self.stim_orientations[this_orientation] + 180)%360
+
+                color_1 = self.stim_orientations[self.probs_to_stims_this_subject[i][0]]
+                color_2 = self.stim_orientations[self.probs_to_stims_this_subject[i][0]] + 180
 
                 if reward_probability_1 > reward_probability_2:
                     HR_orientation = orientation_1
@@ -252,8 +260,8 @@ class RLSession(EyelinkSession):
 
                 params.update(
                         {   
-                        'color_1': 0, 
-                        'color_2': 0, 
+                        'color_1': color_1, 
+                        'color_2': color_2, 
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
@@ -272,25 +280,17 @@ class RLSession(EyelinkSession):
 
                 self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
                 self.trial_counter += 1
-                self.total_duration += np.array(trial_phase_durations).sum()    
-
-        print str(self.trial_counter) + '  trials generated. \nTotal net trial duration amounts to ' + str( self.total_duration/60 ) + ' min.'
 
         # shuffle trials
         self.run_order = np.arange(len(self.trials))
         np.random.shuffle(self.run_order) #shuffle trials 
         self.trials = [self.trials[i] for i in self.run_order]
 
-        # set up grace periods in first and last trial
-        self.trials[0].phase_durations[1] = standard_parameters['grace_period']
-        self.trials[-1].phase_durations[-1] = standard_parameters['grace_period']
+        self.setup_empty_trials()
 
-        # also define counters to run during the experiment
-        self.reward_counter = 0
-        self.loss_counter = 0   
-        self.slow_counter = 0 
-        self.correct_counter = 0 
-        self.eye_movement_counter = 0   
+        # calculate complete duration
+        self.total_duration = np.array([np.array(tr.phase_durations).sum() for tr in self.trials]).sum()
+        print str(self.trial_counter) + '  trials generated. \nTotal net trial duration amounts to ' + str( self.total_duration/60 ) + ' min.'  
 
         this_instruction_string = """Two figures will appear simultaneously on the computer screen. \nOne figure will be rewarded more often and the other will be rewarded less often, \nBUT at first you won't know which is which! \nThere is no ABSOLUTE right answer, \nbut some figures will have a higher chance of giving you reward. \nTry to pick the figure that you find to have the highest chance of giving reward!"""
         self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
@@ -311,34 +311,36 @@ class RLSession(EyelinkSession):
         # create trials
         self.trials = []
 
-        self.trial_counter, self.total_duration = 0, 0
-        for i in range(len(combinations)):                  #3 stimulus pair feedback sets --> iterate over three arrays                   
+        self.trial_counter = 0
+        for i in range(len(combinations)):       
             for j in range(standard_parameters['nr_stim_repetitions_per_run_test']):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
                 params = self.standard_parameters
                 # randomize phase durations a bit
                 trial_phase_durations = np.copy(np.array(standard_phase_durations))
-                trial_phase_durations[5] = 0.0                       
-                trial_phase_durations[6] += np.random.randn()*1.0 #SD 0.1 geeft relatief stabiel feedback interval rond 3 seconde
 
-                # HR_location = self.probs_to_stims_this_subject[][1]
+                # trial_phase_durations[6] += np.random.randn()*1.0 #SD 0.1 geeft relatief stabiel feedback interval rond 3 seconde
+
                 feedback_if_HR_chosen = 0
 
                 reward_probability_1 = self.reward_probs[self.probs_to_stims_this_subject[combinations[i][0]%3][0],int((self.probs_to_stims_this_subject[combinations[i][0]%3][1]+1)/2)]
                 reward_probability_2 = self.reward_probs[self.probs_to_stims_this_subject[combinations[i][1]%3][0],int((self.probs_to_stims_this_subject[combinations[i][1]%3][1]+1)/2)]
 
-                orientation_1 = self.stim_orientations[combinations[i][0]]
-                orientation_2 = self.stim_orientations[combinations[i][1]]
+                this_orientation = np.random.randint(0,6)
+                orientation_1 = self.stim_orientations[this_orientation]
+                orientation_2 = (self.stim_orientations[this_orientation] + 180)%360
+
+                color_1 = self.stim_orientations[combinations[i][0]]
+                color_2 = self.stim_orientations[combinations[i][1]]
 
                 if reward_probability_1 > reward_probability_2:
                     HR_orientation = orientation_1
                 else:
                     HR_orientation = orientation_2
 
-
                 params.update(
                         {   
-                        'color_1': 0, 
-                        'color_2': 0, 
+                        'color_1': color_1, 
+                        'color_2': color_2, 
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
@@ -357,25 +359,19 @@ class RLSession(EyelinkSession):
 
                 self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
                 self.trial_counter += 1
-                self.total_duration += np.array(trial_phase_durations).sum()    
 
-        print str(self.trial_counter) + '  trials generated. \nTotal net trial duration amounts to ' + str( self.total_duration/60 ) + ' min.'
 
         # shuffle trials
         self.run_order = np.arange(len(self.trials))
         np.random.shuffle(self.run_order) #shuffle trials 
         self.trials = [self.trials[i] for i in self.run_order]
 
-        # set up grace periods in first and last trial
-        self.trials[0].phase_durations[1] = standard_parameters['grace_period']
-        self.trials[-1].phase_durations[-1] = standard_parameters['grace_period']
+        self.setup_empty_trials()
 
-        # also define counters to run during the experiment
-        self.reward_counter = 0
-        self.loss_counter = 0   
-        self.slow_counter = 0 
-        self.correct_counter = 0 
-        self.eye_movement_counter = 0   
+        # calculate complete duration
+        self.total_duration = np.array([np.array(tr.phase_durations).sum() for tr in self.trials]).sum()
+        print str(self.trial_counter) + '  trials generated. \nTotal net trial duration amounts to ' + str( self.total_duration/60 ) + ' min.'
+  
 
         this_instruction_string = """Now we're going to test what you've learned!\nYou will not get any feedback anymore, so please choose the figure that 'feels best'."""
         self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
@@ -388,70 +384,65 @@ class RLSession(EyelinkSession):
         # create trials
         self.trials = []
 
-        self.trial_counter, self.total_duration = 0, 0
-        for i in range(len(self.stim_orientations)):                  #3 stimulus pair feedback sets --> iterate over three arrays                   
-            for j in range(standard_parameters['nr_stim_repetitions_per_run_mapper']):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
-                params = self.standard_parameters
-                # randomize phase durations NOT!
-                trial_phase_durations = np.copy(np.array(standard_phase_durations))
-                trial_phase_durations[4] = 1.5                      
-                trial_phase_durations[5] = 0.75                       
-                trial_phase_durations[6] = 0.75 # np.random.randn()*1.0 #SD 0.1 geeft relatief stabiel feedback interval rond 3 seconde
+        self.trial_counter = 0
+        for i in range(len(self.stim_orientations)):                  #3 stimulus pair feedback sets --> iterate over three arrays 
+            for j in range(len(self.stim_orientations)):
+                for k in range(standard_parameters['nr_stim_repetitions_per_run_mapper']):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
+                    params = self.standard_parameters
+                    # randomize phase durations NOT!
+                    trial_phase_durations = np.copy(np.array(standard_phase_durations))
+                    trial_phase_durations[4] = 1.5                      
+                    trial_phase_durations[5] = 0.75                       
+                    trial_phase_durations[6] = 0.75 # np.random.randn()*1.0 #SD 0.1 geeft relatief stabiel feedback interval rond 3 seconde
 
-                feedback_if_HR_chosen = 1
-                orientation_1 = self.stim_orientations[i]
-                orientation_2 = -1
-                HR_orientation = orientation_1
+                    feedback_if_HR_chosen = 1
+                    orientation_1 = self.stim_orientations[i]
+                    orientation_2 = -1
+                    HR_orientation = orientation_1
 
-                params.update(
-                        {   
-                        'color_1': 0, 
-                        'color_2': 0, 
-                        'reward_probability_1': 0, 
-                        'reward_probability_2': 0,
-                        'orientation_1': orientation_1,
-                        'orientation_2': orientation_2,
-                        'HR_orientation': HR_orientation,
-                        'feedback_if_HR_chosen': feedback_if_HR_chosen,
-                        'eye_movement_error': 0,
-                        'answer': -1,
-                        'correct': -1,
-                        'reward': 0,
-                        'reward_gained': 0,
-                        'reward_lost': 0,
-                        'rt': 0,
-                        }
-                    )
+                    color_1 = self.stim_orientations[j]
 
-                self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
-                self.trial_counter += 1
-                self.total_duration += np.array(trial_phase_durations).sum()    
+                    params.update(
+                            {   
+                            'color_1': color_1, 
+                            'color_2': 0, 
+                            'reward_probability_1': 0, 
+                            'reward_probability_2': 0,
+                            'orientation_1': orientation_1,
+                            'orientation_2': orientation_2,
+                            'HR_orientation': HR_orientation,
+                            'feedback_if_HR_chosen': feedback_if_HR_chosen,
+                            'eye_movement_error': 0,
+                            'answer': -1,
+                            'correct': -1,
+                            'reward': 0,
+                            'reward_gained': 0,
+                            'reward_lost': 0,
+                            'rt': 0,
+                            }
+                        )
 
-        print str(self.trial_counter) + '  trials generated. \nTotal net trial duration amounts to ' + str( self.total_duration/60 ) + ' min.'
+                    self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
+                    self.trial_counter += 1
 
         # shuffle trials
         self.run_order = np.arange(len(self.trials))
         np.random.shuffle(self.run_order) #shuffle trials 
         self.trials = [self.trials[i] for i in self.run_order]
 
-        # set up grace periods in first and last trial
-        self.trials[0].phase_durations[1] = standard_parameters['grace_period']
-        self.trials[-1].phase_durations[-1] = standard_parameters['grace_period']
+        self.setup_empty_trials()
 
-        # also define counters to run during the experiment
-        self.reward_counter = 0
-        self.loss_counter = 0   
-        self.slow_counter = 0 
-        self.correct_counter = 0 
-        self.eye_movement_counter = 0   
-
+        # calculate complete duration
+        self.total_duration = np.array([np.array(tr.phase_durations).sum() for tr in self.trials]).sum()
+        print str(self.trial_counter) + '  trials generated. \nTotal net trial duration amounts to ' + str( self.total_duration/60 ) + ' min.'
+  
         this_instruction_string = """Respond as quickly as possible by pushing the correct button for the appearing stimulus."""
         self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
 
 
 
     def close(self):
-        super(RLSession, self).close()
+        super(RLSessionColor, self).close()
         # some more code here.
         
     
@@ -471,15 +462,24 @@ class RLSession(EyelinkSession):
 
 
         if self.index_number == 0:
-            this_feedback_string = """During this run, your total reward is {ac} points.\nYou missed the stimulus {sc} times.""".format(
+            this_feedback_string = """During this run, your total reward is {ac} points,\nof a maximum of {tp} possible points.\nYou missed the stimulus {sc} times.""".format(
                                 ac=self.reward_counter + self.loss_counter,
+                                tp=(i+1)*standard_parameters['win_amount'],
                                 sc=self.slow_counter
                                 )
-            self.feedback = visual.TextStim(self.screen, text = this_feedback_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
+        elif self.index_number in (-1,1):
+            this_feedback_string = """You missed the stimulus {sc} times.""".format(
+                                sc=self.slow_counter
+                                )
+        
+        if self.slow_counter > standard_parameters['nr_slow_warning']:
+            this_feedback_string += "\nThis means you missed the stimulus a lot - Please try to pay more attention."
 
-            self.feedback.draw()
-            self.screen.flip()
-            time_module.sleep(5)
+        self.feedback = visual.TextStim(self.screen, text = this_feedback_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
+
+        self.feedback.draw()
+        self.screen.flip()
+        time_module.sleep(5)
 
 
         self.close()

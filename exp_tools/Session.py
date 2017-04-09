@@ -39,7 +39,7 @@ class Session(object):
         super(Session, self).__init__()
         self.subject_number = subject_number
         self.index_number = index_number
-        
+
         # self.setup_sound_system()
         # pygame.mixer.init()
         # os.chdir('sounds')
@@ -125,6 +125,9 @@ class Session(object):
         now = datetime.datetime.now()
         opfn = now.strftime("%Y-%m-%d_%H.%M.%S")
         
+        # seed the random generator
+        np.random.seed(int(now.second * now.minute * now.hour))
+
         if not os.path.isdir(data_directory):
             os.mkdir(data_directory)
             
@@ -218,15 +221,12 @@ class EyelinkSession(Session):
 
         import string
         randstr = ''.join(np.random.choice(np.array([s for s in string.ascii_lowercase+string.digits]),3))
-        #self.eyelink_temp_file = self.subject_number[:2] + '_' + str(self.index_number) + '_' + str(np.random.randint(99)) + '.edf'
         self.eyelink_temp_file = str(self.subject_number).zfill(2)[:2] + str(self.index_number) + '_' + randstr + '.edf'
-        # self.tracker.openDataFile(self.eyelink_temp_file)
 
 
         if tracker_on:
             # create actual tracker
             try:
-                # self.tracker = EyeLink()
                 self.tracker = eyetracker.EyeTracker(self.display, trackertype='eyelink', resolution=self.display.dispsize, 
                     data_file=self.eyelink_temp_file, bgc=self.display.bgc,eventdetection='native')
                 self.tracker_on = True
@@ -458,6 +458,7 @@ class EyelinkSession(Session):
             # inject local file name into pygaze tracker and then close.
             self.tracker.local_data_file = self.output_file + '.edf'
             self.tracker.close()
+            os.system('cp %s %s'%(os.path.join(os.getcwd(), self.eyelink_temp_file), os.path.join(os.getcwd(), 'data', self.eyelink_temp_file)))
         super(EyelinkSession, self).close()
     
     def play_sound(self, sound_index = '1'):

@@ -72,11 +72,11 @@ class RLTrial(Trial):
                     if self.phase == 0:
                         self.phase_forward()
                 elif ev in self.session.response_button_signs.keys():
-                    if self.phase in (3, 4):
+                    if self.phase == 3:
                         # then check whether one of the correct buttons was pressed:
                         if ev in self.session.response_button_signs.keys():
                             # do we even need an answer?
-                            self.parameters['rt'] = self.session.clock.getTime() - self.stimulus_time
+                            self.parameters['rt'] = self.session.clock.getTime() - self.fixation_signal_time
                             self.parameters['answer'] = self.session.response_button_signs[ev]
                             self.parameters['correct'] = int(self.parameters['HR_orientation'] == self.parameters['answer'])
                             if self.session.response_button_signs[ev] not in [self.parameters['orientation_1'], self.parameters['orientation_2']]:
@@ -103,9 +103,14 @@ class RLTrial(Trial):
                                     self.parameters['reward_gained'] = standard_parameters['win_amount']
                                     self.parameters['reward_lost'] = 0.0
                                     self.session.reward_counter += standard_parameters['win_amount']
-				
-																															
-       
+                            print self.parameters
+
+                            # how much time remained in the response window?
+                            response_time_remainder = self.phase_durations[3] - ( self.stimulus_time - self.fixation_signal_time )
+                            self.phase_durations[6] += response_time_remainder
+
+                            self.phase_forward()
+                                                                                                                 
             super(RLTrial, self).key_event( ev )
 
     def run(self, ID = 0):
