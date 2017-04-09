@@ -22,9 +22,13 @@ class RLTrial(Trial):
         
     def draw(self):
         """docstring for draw"""
-        self.session.fixation_outer_rim.draw()
-        self.session.fixation_rim.draw()
-        self.session.fixation.draw()
+        # only at feedback, do not draw the fixation mark.
+        if not self.phase == 5:
+            self.session.fixation_outer_rim.draw()
+            self.session.fixation_rim.draw()
+            self.session.fixation.draw()
+
+        # new sequence
         if self.phase == 0:
             if self.ID == 0:
                 self.session.instruction.draw()
@@ -38,7 +42,7 @@ class RLTrial(Trial):
         elif self.phase == 5:
             if self.parameters['correct'] == -1:
                 self.session.no_FB_stim.draw()
-            if self.session.train_test == 'train':
+            elif self.session.train_test == 'train':
                 if (self.parameters['correct'] == 1) & (self.parameters['feedback_if_HR_chosen'] == 1):
                     self.session.pos_FB_stim.draw()
                 elif (self.parameters['correct'] == 1) & (self.parameters['feedback_if_HR_chosen'] == 0):
@@ -47,6 +51,10 @@ class RLTrial(Trial):
                     self.session.neg_FB_stim.draw()
                 elif (self.parameters['correct'] == 0) & (self.parameters['feedback_if_HR_chosen'] == 0):
                     self.session.pos_FB_stim.draw()
+            elif self.session.train_test == 'test':
+                self.session.fixation_outer_rim.draw()
+                self.session.fixation_rim.draw()
+                self.session.fixation.draw()
 
         super(RLTrial, self).draw()
 

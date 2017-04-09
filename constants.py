@@ -13,7 +13,7 @@ standard_parameters = {
     'final_grace_period':                       20.,        # rest before and after experiment (fMRI) 
 
     'nr_stim_repetitions_per_run_train':        2,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
-    'nr_stim_repetitions_per_run_test':         6,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_test':         5,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_mapper':       2,        # number of repetitions per run, of the 6x6-trial sequences that fully define the probabilities.
     
     ## spatial dimensions:
