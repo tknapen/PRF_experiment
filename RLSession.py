@@ -270,16 +270,21 @@ class RLSession(EyelinkSession):
                                 tp=(i+1)*standard_parameters['win_amount'],
                                 sc=self.slow_counter
                                 )
-        elif self.index_number in (-1,1):
+            print('TOTAL REWARD THIS RUN:',self.reward_counter + self.loss_counter)
+            print('NUMBER OF MISSED STIMULI THIS RUN:',self.slow_counter)
+
+        elif self.index_number in (-2,-1,1):
             this_feedback_string = """You missed the stimulus {sc} times.""".format(
                                 sc=self.slow_counter
                                 )
+            print('NUMBER OF MISSED STIMULI THIS RUN:',self.slow_counter)
+
         
         if self.slow_counter > standard_parameters['nr_slow_warning']:
             this_feedback_string += "\nThis means you missed the stimulus a lot - Please try to pay more attention."
 
         self.feedback = visual.TextStim(self.screen, text = this_feedback_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
-
+        
         self.feedback.draw()
         self.screen.flip()
         time_module.sleep(5)

@@ -185,9 +185,9 @@ class RLSessionColor(RLSession):
         self.trials = []
 
         self.trial_counter = 0
-        for i in range(len(self.stim_orientations)):                  #3 stimulus pair feedback sets --> iterate over three arrays 
-            for j in range(len(self.stim_orientations)):
-                for k in range(standard_parameters['nr_stim_repetitions_per_run_mapper']):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
+        for i in range(len(self.stim_orientations)): 		#6 orientations     
+            for j in range(len(self.stim_orientations)):    #6 colors 
+                for k in range(standard_parameters['nr_stim_repetitions_per_run_colour_mapper']):              
                     params = self.standard_parameters
                     # randomize phase durations NOT!
                     trial_phase_durations = np.copy(np.array(standard_phase_durations))
@@ -225,8 +225,8 @@ class RLSessionColor(RLSession):
                     self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
                     self.trial_counter += 1
 
-
         self.shuffle_trials()
+        
   
         this_instruction_string = """Respond as quickly as possible by pushing the correct button for the appearing stimulus."""
         self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)

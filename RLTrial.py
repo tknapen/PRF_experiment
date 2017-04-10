@@ -111,7 +111,7 @@ class RLTrial(Trial):
                                     self.parameters['reward_gained'] = standard_parameters['win_amount']
                                     self.parameters['reward_lost'] = 0.0
                                     self.session.reward_counter += standard_parameters['win_amount']
-                            print self.parameters
+                            #print self.parameters
 
                             # how much time remained in the response window?
                             response_time_remainder = self.phase_durations[3] - ( self.stimulus_time - self.fixation_signal_time )

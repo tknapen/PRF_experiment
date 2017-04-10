@@ -4,40 +4,43 @@ from __future__ import division
 # standard parameters
 standard_parameters = {
     
-    'practice':                                 0,
-    'nr_slow_warning':                          6,
+    'practice':                                   0,
+    'nr_slow_warning':                            6,
 
-    'ratio_empty_trials':                       0.3,
-    'empty_trial_duration':                     4.0,
-    'initial_grace_period':                     12.,        # rest before and after experiment (fMRI) 
-    'final_grace_period':                       20.,        # rest before and after experiment (fMRI) 
+    'ratio_empty_trials':                         0.3,
+    'empty_trial_duration':                       4.0,
+    'initial_grace_period':                       12.,        # rest before and after experiment (fMRI) 
+    'final_grace_period':                         20.,        # rest before and after experiment (fMRI) 
 
-    'nr_stim_repetitions_per_run_train':        2,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
-    'nr_stim_repetitions_per_run_test':         5,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
-    'nr_stim_repetitions_per_run_mapper':       2,        # number of repetitions per run, of the 6x6-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_train':          2,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_test':           5,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_colour_mapper':  1,         # number of repetitions per run, of the 6x6-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_location_mapper':6,         # number of repetitions per run, of the 6-trial sequences that fully define the probabilities.
     
-    ## spatial dimensions:
-    'eyelink_calib_size':                       0.5,       # portion of screen heigth    
-    'x_offset':                                 0.0,
-    'y_offset':                                 0.0,
 
-    'vertical_stim_size':                       100.0,
-    'horizontal_stim_size':                     2000.0,
-    'stim_fix_distance':                        20.0,
+    ## spatial dimensions:
+    'eyelink_calib_size':                         0.5,       # portion of screen heigth    
+    'x_offset':                                   0.0,
+    'y_offset':                                   0.0,
+
+    'vertical_stim_size':                         100.0,
+    'horizontal_stim_size':                       2000.0,
+    'stim_fix_distance':                          20.0,
 
     # stimulus variables:
-    'feedback_height':                          35,
-    'win_amount':                               0.1,
-    'loss_amount':                              0,
+    'feedback_height':                            35,
+    'win_amount':                                 0.1,
+    'loss_amount':                                0,
 
     # timing variables:
-    'response_feedback_exp_mean':               0.5,
-    'fix_alert_exp_mean':                       0.125,
+    'response_feedback_exp_mean':                 0.5,
+    'fix_alert_exp_mean':                         0.125,
 
-    'TR':                                       0.945,                 
+    'TR':                                         0.945,                 
 
 } 
-
+#didn't we have different standard_phase_durations for the -2 mapper compared to other runs of the experiment? 
+#jitter? 
 standard_phase_durations = [-0.000001, -0.000001, 0.5, 3.0, 0.5, 1.0, 0.0]
 
 #response_button_signs = {

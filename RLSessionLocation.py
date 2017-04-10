@@ -53,8 +53,8 @@ class RLSessionLocation(RLSession):
         # self.screen.close()
         # shell()
         self.trial_counter = 0
-        for i in range(feedback.shape[1]):                  #3 stimulus pair feedback sets --> iterate over three arrays                   
-            for j in range(feedback.shape[0]):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
+        for i in range(feedback.shape[1]): #3 stimulus pair feedback sets --> iterate over three arrays                   
+            for j in range(feedback.shape[0]): #100 feedback outcomes --> iterate 100 values within the feedback arrays 
                 params = self.standard_parameters
                 # randomize phase durations a bit
                 trial_phase_durations = np.copy(np.array(standard_phase_durations))
@@ -119,8 +119,8 @@ class RLSessionLocation(RLSession):
         self.trials = []
 
         self.trial_counter = 0
-        for i in range(len(combinations)):                  #3 stimulus pair feedback sets --> iterate over three arrays                   
-            for j in range(standard_parameters['nr_stim_repetitions_per_run_test']):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
+        for i in range(len(combinations)): #3 stimulus pair feedback sets                    
+            for j in range(standard_parameters['nr_stim_repetitions_per_run_test']):  
                 params = self.standard_parameters
                 # randomize phase durations a bit
                 trial_phase_durations = np.copy(np.array(standard_phase_durations))
@@ -178,8 +178,8 @@ class RLSessionLocation(RLSession):
         self.trials = []
 
         self.trial_counter, self.total_duration = 0, 0
-        for i in range(len(self.stim_orientations)):                  #3 stimulus pair feedback sets --> iterate over three arrays                   
-            for j in range(standard_parameters['nr_stim_repetitions_per_run_mapper']):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
+        for i in range(len(self.stim_orientations)): #6 orientations
+            for j in range(standard_parameters['nr_stim_repetitions_per_run_location_mapper']):
                 params = self.standard_parameters
                 # randomize phase durations NOT!
                 trial_phase_durations = np.copy(np.array(standard_phase_durations))
