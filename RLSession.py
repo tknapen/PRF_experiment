@@ -258,8 +258,8 @@ class RLSession(EyelinkSession):
             if self.stopped == True:
                 break
 
-            # drop out after 12 trials for practice subject number 0
-            if (self.subject_number == 0) and (i == 12):
+            # drop out after 12 practice trials of training phase for subject number 0
+            if (self.subject_number == 0) and (i == 12) and (self.index_number == 0):
                 self.stopped = True
                 break
 
