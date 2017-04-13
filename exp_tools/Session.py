@@ -458,7 +458,6 @@ class EyelinkSession(Session):
             # inject local file name into pygaze tracker and then close.
             self.tracker.local_data_file = self.output_file + '.edf'
             self.tracker.close()
-            os.system('cp %s %s'%(os.path.join(os.getcwd(), self.eyelink_temp_file), os.path.join(os.getcwd(), 'data', self.eyelink_temp_file)))
         super(EyelinkSession, self).close()
     
     def play_sound(self, sound_index = '1'):

@@ -11,6 +11,7 @@ sys.path.append( 'exp_tools' )
 
 from Trial import *
 from constants import *
+import ColorTools as ct
 
 class RLTrial(Trial):
     def __init__(self, parameters = {}, phase_durations = [], session = None, screen = None, tracker = None):
@@ -129,8 +130,16 @@ class RLTrial(Trial):
         self.session.RL_stim_2.setOri(self.parameters['orientation_2'])
 
         if (self.parameters['color_1'] + self.parameters['color_2']) > 0:
-            self.session.RL_stim_1.setFillColor(hsv2rgb([self.parameters['color_1'], 1, 1]), 'rgb')
-            self.session.RL_stim_2.setFillColor(hsv2rgb([self.parameters['color_2'], 1, 1]), 'rgb')      
+
+            color_a_1 = standard_parameters['stimulus_col_rad'] * np.cos(self.parameters['color_1'])
+            color_b_1 = standard_parameters['stimulus_col_rad'] * np.sin(self.parameters['color_1'])
+            color_1 = ct.lab2psycho((standard_parameters['stimulus_col_baselum'], color_a_1, color_b_1))
+            self.session.RL_stim_1.setFillColor(color_1, 'rgb')
+
+            color_a_2 = standard_parameters['stimulus_col_rad'] * np.cos(self.parameters['color_2'])
+            color_b_2 = standard_parameters['stimulus_col_rad'] * np.sin(self.parameters['color_2'])
+            color_2 = ct.lab2psycho((standard_parameters['stimulus_col_baselum'], color_a_2, color_b_2))
+            self.session.RL_stim_2.setFillColor(color_2, 'rgb')      
 
         while not self.stopped:
             self.run_time = self.session.clock.getTime() - self.start_time

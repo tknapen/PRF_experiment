@@ -17,6 +17,7 @@ from Staircase import ThreeUpOneDownStaircase
 from RLTrial import *
 from RLSession import *
 from constants import *
+import ColorTools as ct
 
 try: 
 	import appnope
@@ -26,8 +27,8 @@ except:
 	
 class RLSessionColor(RLSession):
     def __init__(self, subject_number, index_number, scanner, tracker_on):
+        self.experiment_name = 'color'
         super(RLSessionColor, self).__init__( subject_number, index_number, scanner, tracker_on )
-
 
     def create_training_trials(self):
         """docstring for prepare_trials(self):"""
@@ -69,8 +70,8 @@ class RLSessionColor(RLSession):
                 orientation_1 = self.stim_orientations[this_orientation]
                 orientation_2 = (self.stim_orientations[this_orientation] + 180)%360
 
-                color_1 = self.stim_orientations[self.probs_to_stims_this_subject[i][0]]
-                color_2 = self.stim_orientations[self.probs_to_stims_this_subject[i][0]] + 180
+                color_1 = (np.pi/180.0) * self.stim_orientations[self.probs_to_stims_this_subject[i][0]]
+                color_2 = fmod(color_1 + np.pi, 2*np.pi)
 
                 if reward_probability_1 > reward_probability_2:
                     HR_orientation = orientation_1
@@ -149,8 +150,8 @@ class RLSessionColor(RLSession):
 
                 params.update(
                         {   
-                        'color_1': color_1, 
-                        'color_2': color_2, 
+                        'color_1': (np.pi/180.0) * color_1, 
+                        'color_2': (np.pi/180.0) * color_2, 
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
@@ -169,7 +170,6 @@ class RLSessionColor(RLSession):
 
                 self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
                 self.trial_counter += 1
-
 
         self.shuffle_trials()
 
@@ -200,7 +200,7 @@ class RLSessionColor(RLSession):
                     orientation_2 = -1
                     HR_orientation = orientation_1
 
-                    color_1 = self.stim_orientations[j]
+                    color_1 = (np.pi / 180.0) * self.stim_orientations[j]
 
                     params.update(
                             {   

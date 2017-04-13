@@ -36,8 +36,12 @@ standard_parameters = {
     'response_feedback_exp_mean':                 0.5,
     'fix_alert_exp_mean':                         0.125,
 
-    'TR':                                         0.945,                 
-
+    'TR':                                         0.945,  
+    'stimulus_col_min':                           0,       # start point on color circle
+    'stimulus_col_max':                           6,       # end point on color circle
+    'stimulus_col_steps':                         6,       # how many steps through colorspace
+    'stimulus_col_rad':                           75,       # radius of color circle
+    'stimulus_col_baselum':                       55,       # L
 } 
 #didn't we have different standard_phase_durations for the -2 mapper compared to other runs of the experiment? 
 #jitter? 
@@ -68,6 +72,10 @@ full_screen = True
 FGC = (0,0,0)
 BGC = (255*0.5,255*0.5,255*0.5) # this is converted to -1<->1 in SPSession
 
+xyz_whitepoint_norm  = [95.11, 100.00, 108.43] 
+gamma = 2.19
+
+
 # K2D-38 (all in cm):
 #DISPSIZE = (1024,768)
 #SCREENSIZE = (39.0,29.0)
@@ -81,5 +89,7 @@ SCREENDIST = 225#60.0#65.0#57.0 # centimeters; distance between screen and parti
 # DISPSIZE = (2560,1440)#(1280,720)#,1080)#(1024,768)#(1920,1080)
 # SCREENSIZE = (59.83,33.72)# physical screen size in centimeters
 # SCREENDIST = 75# centimeters; distance between screen and participant's eyes
+
+
 
 

@@ -16,6 +16,8 @@ from Session import *
 from Staircase import ThreeUpOneDownStaircase
 from RLTrial import *
 from constants import *
+import ColorTools as ct
+
 
 try: 
 	import appnope
@@ -28,13 +30,14 @@ class RLSession(EyelinkSession):
         super(RLSession, self).__init__( subject_number, index_number )
 
         self.background_color = (np.array(BGC)/255*2)-1
+        self.experiment_name = 'none'
 
         screen = self.create_screen( size = DISPSIZE, full_screen =full_screen, physical_screen_distance = SCREENDIST, 
             background_color = self.background_color, physical_screen_size = SCREENSIZE, wait_blanking = True, screen_nr = 1 )
         # screen = self.create_screen( size = screen_res, full_screen =0, physical_screen_distance = 159.0, background_color = background_color, physical_screen_size = (70, 40) )
         event.Mouse(visible=False, win=screen)
 
-        self.create_output_file_name()
+        self.create_output_file_name(data_directory = 'data/'+self.experiment_name)
         if tracker_on:
             # self.create_tracker(auto_trigger_calibration = 1, calibration_type = 'HV9')
             # if self.tracker_on:
@@ -248,6 +251,10 @@ class RLSession(EyelinkSession):
     def close(self):
         super(RLSession, self).close()
         # some more code here.
+        new_file = os.path.split(self.output_file)[-1]
+        try:
+            os.rename(os.path.join(os.getcwd(), self.eyelink_temp_file), os.path.join(os.getcwd(), self.output_file + '.edf'))
+
         
     def run(self):
         """docstring for fname"""
