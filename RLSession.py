@@ -26,11 +26,11 @@ except:
 	print 'APPNOPE NOT ACTIVE!'
 	
 class RLSession(EyelinkSession):
-    def __init__(self, subject_number, index_number, scanner, tracker_on):
+    def __init__(self, subject_number, index_number, scanner, tracker_on, experiment_name):
         super(RLSession, self).__init__( subject_number, index_number )
+        self.experiment_name = experiment_name
 
         self.background_color = (np.array(BGC)/255*2)-1
-        self.experiment_name = 'none'
 
         screen = self.create_screen( size = DISPSIZE, full_screen =full_screen, physical_screen_distance = SCREENDIST, 
             background_color = self.background_color, physical_screen_size = SCREENSIZE, wait_blanking = True, screen_nr = 1 )
@@ -51,7 +51,7 @@ class RLSession(EyelinkSession):
             # so always: up->down or left->right
 
             # creat tracker
-            self.create_tracker(auto_trigger_calibration = 0, calibration_type = 'HV%d'%n_points)
+            self.create_tracker(auto_trigger_calibration = 0, calibration_type = 'HV%d'%n_points, sample_rate = 1000)
 
             # it is setup to do a 9 or 5 point circular calibration, at reduced ecc
 
@@ -143,8 +143,8 @@ class RLSession(EyelinkSession):
         self.fixation_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=12, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = (-1.0,-1.0,-1.0), maskParams = {'fringeWidth':0.4})
         self.fixation = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=7, pos = np.array((standard_parameters['x_offset'],0.0)), color = (1, 1, 1), opacity = 1.0, maskParams = {'fringeWidth':0.4})
         
-        self.RL_stim_1 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=5, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=0 )
-        self.RL_stim_2 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=5, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=180 )
+        self.RL_stim_1 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=0, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=0 )
+        self.RL_stim_2 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=0, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=180 )
 
         self.pos_FB_stim = visual.TextStim(self.screen, text = '+', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+2.0)), color = [-1,1,-1], opacity = 1.0)
         self.neg_FB_stim = visual.TextStim(self.screen, text = 'x', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+2.0)), color = [1,-1,-1], opacity = 1.0)
@@ -191,7 +191,7 @@ class RLSession(EyelinkSession):
                 probs_to_stims.append(np.array([list(pso), po]).T)
         probs_to_stims = np.array(probs_to_stims)
         
-	  #pick one combination 
+        #pick one combination 
         self.probs_to_stims_this_subject = probs_to_stims[self.subject_number] #48 combinations of 8 reward prob orderings and 6 color set orderings
         
 
@@ -254,8 +254,8 @@ class RLSession(EyelinkSession):
         new_file = os.path.split(self.output_file)[-1]
         try:
             os.rename(os.path.join(os.getcwd(), self.eyelink_temp_file), os.path.join(os.getcwd(), self.output_file + '.edf'))
-
-        
+        except:
+            pass
     def run(self):
         """docstring for fname"""
         # cycle through trials

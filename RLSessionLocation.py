@@ -26,8 +26,7 @@ except:
 	
 class RLSessionLocation(RLSession):
     def __init__(self, subject_number, index_number, scanner, tracker_on):
-        self.experiment_name = 'location'
-        super(RLSessionLocation, self).__init__( subject_number, index_number, scanner, tracker_on )
+        super(RLSessionLocation, self).__init__( subject_number, index_number, scanner, tracker_on, experiment_name = 'location' )
 
     def create_training_trials(self):
         """docstring for prepare_trials(self):"""

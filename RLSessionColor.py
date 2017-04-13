@@ -27,8 +27,7 @@ except:
 	
 class RLSessionColor(RLSession):
     def __init__(self, subject_number, index_number, scanner, tracker_on):
-        self.experiment_name = 'color'
-        super(RLSessionColor, self).__init__( subject_number, index_number, scanner, tracker_on )
+        super(RLSessionColor, self).__init__( subject_number, index_number, scanner, tracker_on, experiment_name = 'color' )
 
     def create_training_trials(self):
         """docstring for prepare_trials(self):"""

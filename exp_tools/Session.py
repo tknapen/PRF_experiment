@@ -267,7 +267,7 @@ class EyelinkSession(Session):
         self.tracker.send_command('validation_sequence=%s'%point_indices)
         self.tracker.send_command('validation_targets = %s'%validation_targets)
          
-    def apply_settings(self, sensitivity_class = 0, split_screen = False, screen_half = 'L', auto_trigger_calibration = True, sample_rate = 500, calibration_type = 'HV9', margin = 60,pupil_tracking_mode = 'ellipse'):
+    def apply_settings(self, sensitivity_class = 0, split_screen = False, screen_half = 'L', auto_trigger_calibration = True, sample_rate = 1000, calibration_type = 'HV9', margin = 60,pupil_tracking_mode = 'ellipse'):
         
         # set EDF file contents 
         self.tracker.send_command("file_event_filter = LEFT,RIGHT,FIXATION,SACCADE,BLINK,MESSAGE,BUTTON")
@@ -338,7 +338,7 @@ class EyelinkSession(Session):
         else:
             self.tracker.send_command("calibration_type = " + calibration_type)
             
-    def tracker_setup(self, sensitivity_class = 0, split_screen = False, screen_half = 'L', auto_trigger_calibration = True, calibration_type = 'HV9', sample_rate = 500):
+    def tracker_setup(self, sensitivity_class = 0, split_screen = False, screen_half = 'L', auto_trigger_calibration = True, calibration_type = 'HV9', sample_rate = 1000):
         if self.tracker.connected():
                         
             self.tracker.calibrate()
