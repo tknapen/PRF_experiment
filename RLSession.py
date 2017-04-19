@@ -281,8 +281,9 @@ class RLSession(EyelinkSession):
             print('NUMBER OF MISSED STIMULI THIS RUN:',self.slow_counter)
 
         elif self.index_number in (-2,-1,1):
-            this_feedback_string = """You missed the stimulus {sc} times.""".format(
-                                sc=self.slow_counter
+            this_feedback_string = """You missed the stimulus {sc} times out of {tr} trials.""".format(
+                                sc=self.slow_counter, 
+                                tr=len(self.trials)
                                 )
             print('NUMBER OF MISSED STIMULI THIS RUN:',self.slow_counter)
 

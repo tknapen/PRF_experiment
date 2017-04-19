@@ -172,7 +172,7 @@ class RLSessionColor(RLSession):
 
         self.shuffle_trials()
 
-        this_instruction_string = """Now we're going to test what you've learned!\nYou will not get any feedback anymore, so please choose the figure that 'feels best'."""
+        this_instruction_string = """It's time  to test what you've learned!\n During this set of trials you will NOT receive feedback (or rewards) to your responses. \nDuring this phase you will see new combinations of colours. \nPlease choose the colour that 'feels' more correct based on the training. \nIf you are not sure which one to pick, just go with your gut instinct!"""
         self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
 
 
