@@ -88,7 +88,7 @@ class RLTrial(Trial):
                             self.parameters['rt'] = self.session.clock.getTime() - self.fixation_signal_time
                             self.parameters['answer'] = self.session.response_button_signs[ev]
                             self.parameters['correct'] = int(self.parameters['HR_orientation'] == self.parameters['answer'])
-                            if self.session.response_button_signs[ev] not in [self.parameters['orientation_1'], self.parameters['orientation_2']]:
+                            if self.session.response_button_signs[ev] not in [-1,1]:
                                 self.parameters['correct'] = -1
                             # feedback bookkeeping
                             if self.session.train_test == 'train':
@@ -115,10 +115,10 @@ class RLTrial(Trial):
                             #print self.parameters
 
                             # how much time remained in the response window?
-                            response_time_remainder = self.phase_durations[3] - ( self.stimulus_time - self.fixation_signal_time )
-                            self.phase_durations[6] += response_time_remainder
-
-                            self.phase_forward()
+                            # response_time_remainder = self.phase_durations[3] - ( self.stimulus_time - self.fixation_signal_time )
+                            # self.phase_durations[6] += response_time_remainder
+                            if self.session.index_number != -1: # do not switch the stimulus off for mapper
+                                self.phase_forward()
                                                                                                                  
             super(RLTrial, self).key_event( ev )
 

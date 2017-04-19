@@ -59,6 +59,7 @@ class RLSessionColor(RLSession):
                 trial_phase_durations = np.copy(np.array(standard_phase_durations))
                 trial_phase_durations[2] += np.random.exponential(self.standard_parameters['fix_alert_exp_mean'])                
                 trial_phase_durations[4] += np.random.exponential(self.standard_parameters['response_feedback_exp_mean'])
+                trial_phase_durations[6] += np.random.exponential(self.standard_parameters['iti_exp_mean'])
 
                 feedback_if_HR_chosen = feedback[j, i]
 
@@ -73,9 +74,15 @@ class RLSessionColor(RLSession):
                 color_2 = fmod(color_1 + np.pi, 2*np.pi)
 
                 if reward_probability_1 > reward_probability_2:
-                    HR_orientation = orientation_1
+                    if orientation_1 in (240,180,120):
+                        HR_orientation = -1
+                    else:
+                        HR_orientation = 1
                 else:
-                    HR_orientation = orientation_2
+                    if orientation_1 in (240,180,120):
+                        HR_orientation = 1
+                    else:
+                        HR_orientation = -1
 
                 params.update(
                         {   
@@ -88,7 +95,7 @@ class RLSessionColor(RLSession):
                         'HR_orientation': HR_orientation,
                         'feedback_if_HR_chosen': feedback_if_HR_chosen,
                         'eye_movement_error': 0,
-                        'answer': -1,
+                        'answer': 0,
                         'correct': -1,
                         'reward': 0,
                         'reward_gained': 0,
@@ -106,7 +113,7 @@ class RLSessionColor(RLSession):
         self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
 
 
-    def create_test_trials(self, index_number=1):   
+    def create_test_trials(self):   
         # ranges
         # amount_of_colors = range(6) 
         # self.hues = (np.linspace(0,1,len(amount_of_colors), endpoint=False)).reshape(2,3).T
@@ -143,9 +150,15 @@ class RLSessionColor(RLSession):
                 color_2 = self.stim_orientations[combinations[i][1]]
 
                 if reward_probability_1 > reward_probability_2:
-                    HR_orientation = orientation_1
+                    if orientation_1 in (240,180,120):
+                        HR_orientation = -1
+                    else:
+                        HR_orientation = 1
                 else:
-                    HR_orientation = orientation_2
+                    if orientation_1 in (240,180,120):
+                        HR_orientation = 1
+                    else:
+                        HR_orientation = -1
 
                 params.update(
                         {   
@@ -158,7 +171,7 @@ class RLSessionColor(RLSession):
                         'HR_orientation': HR_orientation,
                         'feedback_if_HR_chosen': feedback_if_HR_chosen,
                         'eye_movement_error': 0,
-                        'answer': -1,
+                        'answer': 0,
                         'correct': -1,
                         'reward': 0,
                         'reward_gained': 0,
@@ -176,7 +189,7 @@ class RLSessionColor(RLSession):
         self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
 
 
-    def create_mapper_trials(self, index_number=1):   
+    def create_mapper_trials(self):   
 
         self.standard_parameters = standard_parameters              
 
@@ -212,7 +225,7 @@ class RLSessionColor(RLSession):
                             'HR_orientation': HR_orientation,
                             'feedback_if_HR_chosen': feedback_if_HR_chosen,
                             'eye_movement_error': 0,
-                            'answer': -1,
+                            'answer': 0,
                             'correct': -1,
                             'reward': 0,
                             'reward_gained': 0,
@@ -225,9 +238,9 @@ class RLSessionColor(RLSession):
                     self.trial_counter += 1
 
         self.shuffle_trials()
-        
   
-        this_instruction_string = """Respond as quickly as possible by pushing the correct button for the appearing stimulus."""
+        # this_instruction_string = """Respond as quickly as possible by pushing the correct button for the appearing stimulus."""
+        this_instruction_string = """"""
         self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
 
     

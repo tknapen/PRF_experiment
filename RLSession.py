@@ -146,9 +146,9 @@ class RLSession(EyelinkSession):
         self.RL_stim_1 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=0, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=0 )
         self.RL_stim_2 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=0, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=180 )
 
-        self.pos_FB_stim = visual.TextStim(self.screen, text = '+', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+2.0)), color = [-1,1,-1], opacity = 1.0)
+        self.pos_FB_stim = visual.TextStim(self.screen, text = '+', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+2.0)), color = [-1,0.5,-1], opacity = 1.0)
         self.neg_FB_stim = visual.TextStim(self.screen, text = 'x', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+2.0)), color = [1,-1,-1], opacity = 1.0)
-        self.no_FB_stim = visual.TextStim(self.screen, text = '!', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = [1,-1,-1], opacity = 1.0)
+        self.no_FB_stim = visual.TextStim(self.screen, text = 'MISS', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = [1,-1,-1], opacity = 1.0)
 
 
         # trials can be set up independently of the staircases that support their parameters
@@ -159,11 +159,7 @@ class RLSession(EyelinkSession):
             self.train_test = 'test'
             self.create_test_trials()
         elif self.index_number == -1:
-            self.train_test = 'train' # mapper gives you feedback, at least for the pupil experiment.
-            self.create_mapper_trials()
-        elif self.index_number == -2:
-            self.train_test = 'train' # mapper gives you feedback, at least for the pupil experiment.
-            standard_phase_durations[3] = 1.5
+            self.train_test = 'train' 
             self.create_mapper_trials()
 
         # also define counters to run during the experiment
@@ -172,6 +168,20 @@ class RLSession(EyelinkSession):
         self.slow_counter = 0 
         self.correct_counter = 0 
         self.eye_movement_counter = 0  
+
+        #AMSinit 
+        try:
+            from ctypes import windll
+            global AMS
+            self.AMS = windll.amsserial # requires AmsSerial.dll !!!
+        except:
+            print '### AmsSerial.dll not found. Download from www.vu-ams.nl'
+
+        #AMSconnect 
+        try:
+            self.AMS.Connect("COM3", "AMS5fs")
+        except:
+            print '### Failed to connect!'
 
 
     def positions_for_subject_number(self):
@@ -256,10 +266,26 @@ class RLSession(EyelinkSession):
             os.rename(os.path.join(os.getcwd(), self.eyelink_temp_file), os.path.join(os.getcwd(), self.output_file + '.edf'))
         except:
             pass
+
+        #AMSdisconnect 
+        try:
+            self.AMS.Disconnect()
+        except:
+            print '### Failed to disconnect!'            
+
     def run(self):
         """docstring for fname"""
         # cycle through trials
         for i, trial in enumerate(self.trials):
+
+            #AMSsendCodedMarker 
+            # takes about 18 milliseconds for AMSi RS232 and 32ms for AMSi USB version
+            try:
+                self.AMS.SendCodedMarker(i)
+            except:
+                print '### Failed to send codedmarker!'
+
+
             # run the prepared trial
             trial.run(ID = i)
             if self.stopped == True:
@@ -296,8 +322,6 @@ class RLSession(EyelinkSession):
         self.feedback.draw()
         self.screen.flip()
         time_module.sleep(5)
-
-
 
         self.close()
         
