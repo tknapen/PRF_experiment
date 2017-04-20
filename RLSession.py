@@ -147,7 +147,7 @@ class RLSession(EyelinkSession):
         self.RL_stim_2 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=0, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=180 )
 
         self.pos_FB_stim = visual.TextStim(self.screen, text = '+', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [-1,0.25,-1], opacity = 1.0)
-        self.neg_FB_stim = visual.TextStim(self.screen, text = 'x', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [1,-1,-1], opacity = 1.0)
+        self.neg_FB_stim = visual.TextStim(self.screen, text = 'x', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [0.5,-1,-1], opacity = 1.0)
         self.no_FB_stim = visual.TextStim(self.screen, text = 'MISS', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [1,-1,-1], opacity = 1.0)
 
 
@@ -168,6 +168,7 @@ class RLSession(EyelinkSession):
         self.slow_counter = 0 
         self.correct_counter = 0 
         self.eye_movement_counter = 0  
+        self.correct_counter = 0 
 
         #AMSinit 
         try:
@@ -296,21 +297,25 @@ class RLSession(EyelinkSession):
                 self.stopped = True
                 break
 
-        if self.index_number == 0:
+        if self.index_number in [0,1]:
             if os.path.isfile(os.path.join(os.getcwd(), 'data' , str(self.subject_number) + '.txt')):
                 with open(os.path.join(os.getcwd(), 'data' , str(self.subject_number) + '.txt'), 'r') as f:
                     older_stuff = f.readlines()
-                    rc, lc, ac = (float(x) for x in older_stuff[-1].split('\n')[0].split())
+                    rc, lc, ac, cc = (float(x) for x in older_stuff[-1].split('\n')[0].split())
             else:
-                rc, lc, ac = 0, 0, 0
+                rc, lc, ac, cc = 0, 0, 0, 0
 
             with open(os.path.join(os.getcwd(), 'data' , str(self.subject_number) + '.txt'), 'a') as f:
-                ac = ac + self.reward_counter + self.loss_counter
-                rc, lc = self.reward_counter, self.loss_counter
-                f.write('%3.2f\t%3.2f\t%3.2f\n'%(rc, lc, ac))
+                ac = ac + self.reward_counter + self.loss_counter #total reward earned 
+                rc, lc = self.reward_counter, self.loss_counter #rewards and losses this run 
+                cc = self.correct_counter/len(self.trials) #percentage correct choices over all trials this run 
+                print ('percentage correct:', cc, 'of', len(self.trials), 'trials')
+                f.write('%3.2f\t%3.2f\t%3.2f\t%3.2f\n'%(rc, lc, ac, cc))
+
 
             # now for feedback
-            this_feedback_string = """During this run, your total reward is {ac} points,\nof a maximum of {tp} possible points.\nYou missed the stimulus {sc} times during this run.""".format(
+        if self.index_number == 0: 
+            this_feedback_string = """During this run, you earned {ac} points,\nof a maximum of {tp} possible points.\nYou missed the stimulus {sc} times during this run.""".format(
                                 ac=self.reward_counter + self.loss_counter,
                                 tp=(i+1)*standard_parameters['win_amount'],
                                 sc=self.slow_counter
@@ -329,7 +334,7 @@ class RLSession(EyelinkSession):
         if self.slow_counter > standard_parameters['nr_slow_warning']:
             this_feedback_string += "\nThis means you missed the stimulus a lot - Please try to pay more attention."
 
-        self.feedback = visual.TextStim(self.screen, text = this_feedback_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
+        self.feedback = visual.TextStim(self.screen, text = this_feedback_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
         
         self.feedback.draw()
         self.screen.flip()

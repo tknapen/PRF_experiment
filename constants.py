@@ -45,8 +45,7 @@ standard_parameters = {
     'stimulus_col_baselum':                       55,       # L
 } 
 
-#didn't we have different standard_phase_durations for the -2 mapper compared to other runs of the experiment? 
-#jitter? 
+
 standard_phase_durations = [-0.000001, -0.000001, 0.375, 3.0, 0.5, 1.0, 0.0]
 
 # response_button_signs = {
@@ -71,7 +70,7 @@ FGC = (0,0,0)
 BGC = (255*0.5,255*0.5,255*0.5) # this is converted to -1<->1 in Session
 
 xyz_whitepoint_norm  = [95.11, 100.00, 108.43] 
-gamma = 2.19
+gamma = 2.20
 
 
 # K2D-38 (all in cm):

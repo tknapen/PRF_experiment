@@ -44,7 +44,8 @@ class RLSessionColor(RLSession):
         EF_correct = np.array(np.r_[np.ones(6), np.zeros(4)]) #60:40 chance to get positive feedback  
         for responses in ([AB_correct, CD_correct, EF_correct]): 
             np.random.shuffle(responses)
-        feedback = np.vstack([np.array([AB_correct, CD_correct, EF_correct]).T for i in range(standard_parameters['nr_stim_repetitions_per_run_train'])]) #3x10x5 array of all feedback types 
+        feedback = np.vstack([np.array([AB_correct, CD_correct, EF_correct]).T for i in range(standard_parameters['nr_stim_repetitions_per_run_train'])]) #3x10xi array of feedback after correct response 
+
 
         self.standard_parameters = standard_parameters              
 
@@ -52,8 +53,8 @@ class RLSessionColor(RLSession):
         self.trials = []
 
         self.trial_counter = 0
-        for i in range(feedback.shape[1]):                  #3 stimulus pair feedback sets --> iterate over three arrays                   
-            for j in range(feedback.shape[0]):              #100 feedback outcomes --> iterate 100 values within the feedback arrays 
+        for i in range(feedback.shape[1]):                  #3 stimulus pair feedback sets                   
+            for j in range(feedback.shape[0]):  			#10 x nr_stim_repetitions_per_run_train'             
                 params = self.standard_parameters
                 # randomize phase durations a bit
                 trial_phase_durations = np.copy(np.array(standard_phase_durations))
@@ -86,8 +87,8 @@ class RLSessionColor(RLSession):
 
                 params.update(
                         {   
-                        'color_1': color_1 + np.pi/6.0, 
-                        'color_2': color_2 + np.pi/6.0, 
+                        'color_1': color_1 + np.pi/16, 
+                        'color_2': color_2 + np.pi/16, 
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
@@ -109,8 +110,8 @@ class RLSessionColor(RLSession):
 
         self.shuffle_trials()
 
-        this_instruction_string = """Two colours will appear simultaneously on the computer screen. \nOne colour will be rewarded more often and the other will be rewarded less often, \nBUT at first you won't know which is which! \nThere is no ABSOLUTE right answer, \nbut some colours will have a higher chance of giving you reward. \nTry to pick the colour that you find to have the highest chance of giving reward! \nCorrect choices will be rewarded with 0.10 points, incorrect responses receive no points."""
-        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
+        this_instruction_string = """Two colours will appear simultaneously on the computer screen. \nOne colour will be rewarded more often and the other will be rewarded less often, \nBUT at first you won't know which is which! \nThere is no ABSOLUTE right answer, \nbut some colours will have a higher chance of giving you reward. \nTry to pick the colour that you find to have the highest chance of giving reward! \nCorrect choices will be rewarded with 0.10 points, incorrect responses receive no points.\n\nPress the spacebar to start"""
+        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
 
 
     def create_test_trials(self):   
@@ -162,8 +163,8 @@ class RLSessionColor(RLSession):
 
                 params.update(
                         {   
-                        'color_1': (np.pi/180.0) * color_1 + np.pi/6.0, 
-                        'color_2': (np.pi/180.0) * color_2 + np.pi/6.0, 
+                        'color_1': (np.pi/180.0) * color_1 + np.pi/16, 
+                        'color_2': (np.pi/180.0) * color_2 + np.pi/16, 
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
@@ -185,8 +186,8 @@ class RLSessionColor(RLSession):
 
         self.shuffle_trials()
 
-        this_instruction_string = """It's time  to test what you've learned!\n During this set of trials you will NOT receive feedback (or rewards) to your responses. \nDuring this phase you will see new combinations of colours. \nPlease choose the colour that 'feels' more correct based on the training. \nIf you are not sure which one to pick, just go with your gut instinct!"""
-        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
+        this_instruction_string = """It's time  to test what you've learned!\n During this set of trials you will NOT receive feedback (or rewards) to your responses. \nDuring this phase you will see new combinations of colours. \nPlease choose the colour that 'feels' more correct based on the training. \nIf you are not sure which one to pick, just go with your gut instinct! \n\nPress the spacebar to start..."""
+        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
 
 
     def create_mapper_trials(self):   
@@ -216,7 +217,7 @@ class RLSessionColor(RLSession):
 
                     params.update(
                             {   
-                            'color_1': color_1 + np.pi/6.0, 
+                            'color_1': color_1 + np.pi/16, 
                             'color_2': 0, 
                             'reward_probability_1': 0, 
                             'reward_probability_2': 0,
@@ -241,7 +242,7 @@ class RLSessionColor(RLSession):
   
         # this_instruction_string = """Respond as quickly as possible by pushing the correct button for the appearing stimulus."""
         this_instruction_string = """"""
-        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
+        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
 
     
 

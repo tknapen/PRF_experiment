@@ -99,11 +99,13 @@ class RLTrial(Trial):
                                     self.parameters['reward_gained'] = standard_parameters['win_amount']
                                     self.parameters['reward_lost'] = 0.0
                                     self.session.reward_counter += standard_parameters['win_amount']
+                                    self.session.correct_counter += 1
                                 elif (self.parameters['correct'] == 1) & (self.parameters['feedback_if_HR_chosen'] == 0):
                                     self.parameters['reward'] = 0
                                     self.parameters['reward_gained'] = 0.0
                                     self.parameters['reward_lost'] = standard_parameters['loss_amount']
                                     self.session.loss_counter += standard_parameters['loss_amount']
+                                    self.session.correct_counter += 1 
                                 elif (self.parameters['correct'] == 0) & (self.parameters['feedback_if_HR_chosen'] == 1):
                                     self.parameters['reward'] = 0
                                     self.parameters['reward_gained'] = 0.0
