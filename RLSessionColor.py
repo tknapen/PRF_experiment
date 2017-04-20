@@ -86,8 +86,8 @@ class RLSessionColor(RLSession):
 
                 params.update(
                         {   
-                        'color_1': color_1, 
-                        'color_2': color_2, 
+                        'color_1': color_1 + np.pi/6.0, 
+                        'color_2': color_2 + np.pi/6.0, 
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
@@ -162,8 +162,8 @@ class RLSessionColor(RLSession):
 
                 params.update(
                         {   
-                        'color_1': (np.pi/180.0) * color_1, 
-                        'color_2': (np.pi/180.0) * color_2, 
+                        'color_1': (np.pi/180.0) * color_1 + np.pi/6.0, 
+                        'color_2': (np.pi/180.0) * color_2 + np.pi/6.0, 
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
@@ -216,7 +216,7 @@ class RLSessionColor(RLSession):
 
                     params.update(
                             {   
-                            'color_1': color_1, 
+                            'color_1': color_1 + np.pi/6.0, 
                             'color_2': 0, 
                             'reward_probability_1': 0, 
                             'reward_probability_2': 0,
