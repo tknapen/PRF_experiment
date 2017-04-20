@@ -2,7 +2,7 @@ from __future__ import division
 
 import numpy as np
 
-from IPython import embed as dbstop
+# from IPython import embed as dbstop
 
 import constants as cc
 

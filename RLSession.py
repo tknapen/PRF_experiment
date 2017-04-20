@@ -139,16 +139,16 @@ class RLSession(EyelinkSession):
         
         # and, stimuli that are identical across all trials
         # fixation point
-        self.fixation_outer_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=20, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = self.background_color, maskParams = {'fringeWidth':0.4})
+        self.fixation_outer_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=17, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = self.background_color, maskParams = {'fringeWidth':0.4})
         self.fixation_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=12, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = (-1.0,-1.0,-1.0), maskParams = {'fringeWidth':0.4})
         self.fixation = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=7, pos = np.array((standard_parameters['x_offset'],0.0)), color = (1, 1, 1), opacity = 1.0, maskParams = {'fringeWidth':0.4})
         
         self.RL_stim_1 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=0, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=0 )
         self.RL_stim_2 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=0, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=180 )
 
-        self.pos_FB_stim = visual.TextStim(self.screen, text = '+', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+2.0)), color = [-1,0.5,-1], opacity = 1.0)
-        self.neg_FB_stim = visual.TextStim(self.screen, text = 'x', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+2.0)), color = [1,-1,-1], opacity = 1.0)
-        self.no_FB_stim = visual.TextStim(self.screen, text = 'MISS', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = [1,-1,-1], opacity = 1.0)
+        self.pos_FB_stim = visual.TextStim(self.screen, text = '+', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [-1,0.25,-1], opacity = 1.0)
+        self.neg_FB_stim = visual.TextStim(self.screen, text = 'x', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [1,-1,-1], opacity = 1.0)
+        self.no_FB_stim = visual.TextStim(self.screen, text = 'MISS', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [1,-1,-1], opacity = 1.0)
 
 
         # trials can be set up independently of the staircases that support their parameters
@@ -296,9 +296,21 @@ class RLSession(EyelinkSession):
                 self.stopped = True
                 break
 
-
         if self.index_number == 0:
-            this_feedback_string = """During this run, your total reward is {ac} points,\nof a maximum of {tp} possible points.\nYou missed the stimulus {sc} times.""".format(
+            if os.path.isfile(os.path.join(os.getcwd(), 'data' , str(self.subject_number) + '.txt')):
+                with open(os.path.join(os.getcwd(), 'data' , str(self.subject_number) + '.txt'), 'r') as f:
+                    older_stuff = f.readlines()
+                    rc, lc, ac = (float(x) for x in older_stuff[-1].split('\n')[0].split())
+            else:
+                rc, lc, ac = 0, 0, 0
+
+            with open(os.path.join(os.getcwd(), 'data' , str(self.subject_number) + '.txt'), 'a') as f:
+                ac = ac + self.reward_counter + self.loss_counter
+                rc, lc = self.reward_counter, self.loss_counter
+                f.write('%3.2f\t%3.2f\t%3.2f\n'%(rc, lc, ac))
+
+            # now for feedback
+            this_feedback_string = """During this run, your total reward is {ac} points,\nof a maximum of {tp} possible points.\nYou missed the stimulus {sc} times during this run.""".format(
                                 ac=self.reward_counter + self.loss_counter,
                                 tp=(i+1)*standard_parameters['win_amount'],
                                 sc=self.slow_counter
@@ -306,7 +318,7 @@ class RLSession(EyelinkSession):
             print('TOTAL REWARD THIS RUN:',self.reward_counter + self.loss_counter)
             print('NUMBER OF MISSED STIMULI THIS RUN:',self.slow_counter)
 
-        elif self.index_number in (-2,-1,1):
+        elif self.index_number in (-1,1):
             this_feedback_string = """You missed the stimulus {sc} times out of {tr} trials.""".format(
                                 sc=self.slow_counter, 
                                 tr=len(self.trials)
@@ -322,6 +334,7 @@ class RLSession(EyelinkSession):
         self.feedback.draw()
         self.screen.flip()
         time_module.sleep(5)
+
 
         self.close()
         

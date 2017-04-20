@@ -13,7 +13,7 @@ standard_parameters = {
     'final_grace_period':                         20.,        # rest before and after experiment (GSR, fMRI) 
 
     'nr_stim_repetitions_per_run_train':          2,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
-    'nr_stim_repetitions_per_run_test':           5,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_test':           8,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_colour_mapper':  1,         # number of repetitions per run, of the 6x6-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_location_mapper':6,         # number of repetitions per run, of the 6-trial sequences that fully define the probabilities.
     
@@ -23,9 +23,9 @@ standard_parameters = {
     'x_offset':                                   0.0,
     'y_offset':                                   0.0,
 
-    'vertical_stim_size':                         100.0,
+    'vertical_stim_size':                         200.0,
     'horizontal_stim_size':                       2000.0,
-    'stim_fix_distance':                          20.0,
+    'stim_fix_distance':                          10.0,
 
     # stimulus variables:
     'feedback_height':                            65,
@@ -68,7 +68,7 @@ response_button_signs = {
 
 full_screen = True
 FGC = (0,0,0)
-BGC = (255*0.5,255*0.5,255*0.5) # this is converted to -1<->1 in SPSession
+BGC = (255*0.5,255*0.5,255*0.5) # this is converted to -1<->1 in Session
 
 xyz_whitepoint_norm  = [95.11, 100.00, 108.43] 
 gamma = 2.19

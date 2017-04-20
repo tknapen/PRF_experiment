@@ -35,8 +35,10 @@ class RLTrial(Trial):
                 self.session.instruction.draw()
         elif self.phase == 2:
             self.session.fixation.setColor((-1,-1,-1))
+            self.session.fixation_outer_rim.setColor((-1,-1,-1))
         elif self.phase == 3:
             self.session.fixation.setColor((1,1,1))
+            self.session.fixation_outer_rim.setColor(self.session.background_color)
             self.session.RL_stim_1.draw()
             if self.parameters['orientation_2'] >= 0:
                 self.session.RL_stim_2.draw()
@@ -52,7 +54,7 @@ class RLTrial(Trial):
                     self.session.neg_FB_stim.draw()
                 elif (self.parameters['correct'] == 0) & (self.parameters['feedback_if_HR_chosen'] == 0):
                     self.session.pos_FB_stim.draw()
-            elif self.session.train_test == 'test':
+            elif self.session.index_number in (-1,1):
                 self.session.fixation_outer_rim.draw()
                 self.session.fixation_rim.draw()
                 self.session.fixation.draw()
