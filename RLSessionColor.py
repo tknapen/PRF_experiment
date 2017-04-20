@@ -109,7 +109,7 @@ class RLSessionColor(RLSession):
 
         self.shuffle_trials()
 
-        this_instruction_string = """Two figures will appear simultaneously on the computer screen. \nOne figure will be rewarded more often and the other will be rewarded less often, \nBUT at first you won't know which is which! \nThere is no ABSOLUTE right answer, \nbut some figures will have a higher chance of giving you reward. \nTry to pick the figure that you find to have the highest chance of giving reward! \nCorrect choices will be rewarded with 0.10 points, incorrect responses receive no points."""
+        this_instruction_string = """Two colours will appear simultaneously on the computer screen. \nOne colour will be rewarded more often and the other will be rewarded less often, \nBUT at first you won't know which is which! \nThere is no ABSOLUTE right answer, \nbut some colours will have a higher chance of giving you reward. \nTry to pick the colour that you find to have the highest chance of giving reward! \nCorrect choices will be rewarded with 0.10 points, incorrect responses receive no points."""
         self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 200), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
 
 

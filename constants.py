@@ -75,18 +75,18 @@ gamma = 2.19
 
 
 # K2D-38 (all in cm):
-# DISPSIZE = (1024,768)
-# SCREENSIZE = (39.0,29.0)
-# SCREENDIST = 60.0
+DISPSIZE = (1024,768)
+SCREENSIZE = (39.0,29.0)
+SCREENDIST = 60.0
 #7T scan room (all in cm):
 #DISPSIZE = (1024,768)
 #DISPSIZE = (2560,1440)#(2560,1440)#(1280,720)#,1080)#(1024,768)#(1920,1080)#(2560,1440)
 #SCREENSIZE = (69.84,39.29) #physical screen size in centimeters
 #SCREENDIST = 225#60.0#65.0#57.0 # centimeters; distance between screen and participant's eyes
 #office screen
-DISPSIZE = (2560,1440)#(1280,720)#,1080)#(1024,768)#(1920,1080)
-SCREENSIZE = (59.83,33.72)# physical screen size in centimeters
-SCREENDIST = 75# centimeters; distance between screen and participant's eyes
+# DISPSIZE = (2560,1440)#(1280,720)#,1080)#(1024,768)#(1920,1080)
+# SCREENSIZE = (59.83,33.72)# physical screen size in centimeters
+# SCREENDIST = 75# centimeters; distance between screen and participant's eyes
 
 
 
