@@ -133,13 +133,15 @@ class RLSession(EyelinkSession):
 
         self.scanner = scanner
         self.stim_orientations = np.linspace(0, 360, 6, endpoint = False)
+        self.colour_orientations = np.array([0,90,120,180,270,300]) #different colours: magenta-green; yellow-dark blue; red-light blue  
+        
         self.standard_vertices = [[standard_parameters['stim_fix_distance'],0], 
                             [standard_parameters['horizontal_stim_size'], standard_parameters['vertical_stim_size']/2.0], 
                             [standard_parameters['horizontal_stim_size'], -standard_parameters['vertical_stim_size']/2.0]]
         
         # and, stimuli that are identical across all trials
         # fixation point
-        self.fixation_outer_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=17, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = self.background_color, maskParams = {'fringeWidth':0.4})
+        self.fixation_outer_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=15, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = self.background_color, maskParams = {'fringeWidth':0.4})
         self.fixation_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=12, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = (-1.0,-1.0,-1.0), maskParams = {'fringeWidth':0.4})
         self.fixation = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=7, pos = np.array((standard_parameters['x_offset'],0.0)), color = (1, 1, 1), opacity = 1.0, maskParams = {'fringeWidth':0.4})
         
@@ -148,7 +150,7 @@ class RLSession(EyelinkSession):
 
         self.pos_FB_stim = visual.TextStim(self.screen, text = '+', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [-1,0.25,-1], opacity = 1.0)
         self.neg_FB_stim = visual.TextStim(self.screen, text = 'x', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [0.5,-1,-1], opacity = 1.0)
-        self.no_FB_stim = visual.TextStim(self.screen, text = 'MISS', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [1,-1,-1], opacity = 1.0)
+        self.no_FB_stim = visual.TextStim(self.screen, text = 'miss', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [1,-1,-1], opacity = 1.0)
 
 
         # trials can be set up independently of the staircases that support their parameters

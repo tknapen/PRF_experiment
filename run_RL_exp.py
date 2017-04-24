@@ -2,7 +2,7 @@ import sys, datetime
 
 sys.path.append( 'exp_tools' )
 
-from RLSessionLocation import *
+#from RLSessionLocation import *
 from RLSessionColor import *
 
 try:
