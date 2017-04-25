@@ -133,11 +133,11 @@ class RLSession(EyelinkSession):
 
         self.scanner = scanner
         self.stim_orientations = np.linspace(0, 360, 6, endpoint = False)
-        #self.colour_orientations = np.array([330,285,190,150,105,30]) #paars-groen, donker blauw-bruin/geel, licht 
-		#blauw-oranje
-        self.colour_orientations = np.array([60,110,180,240,300,360]) #paars-groen, donker blauw-bruin/geel, licht 
+        #self.colour_orientations = np.array([330,285,190,150,105,30]) #CIELAB: paars/groen, donker blauw/bruin-geel, licht 
+		#blauw/oranje
+        self.colour_orientations = np.array([60,110,180,240,290,360]) #HSV: geel/donker blauw, groen/magenta, licht blauw/rood
 		
-        self.colour_luminances = np.array([0.49, 0.60, 0.57, 0.70, 0.70, 0.69) #luminance values from flicker task 
+        self.colour_luminances = np.array([0.49, 0.60, 0.57, 0.70, 0.70, 0.69]) #luminance values from flicker task 
  
 		
         
