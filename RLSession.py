@@ -133,7 +133,13 @@ class RLSession(EyelinkSession):
 
         self.scanner = scanner
         self.stim_orientations = np.linspace(0, 360, 6, endpoint = False)
-        self.colour_orientations = np.array([330,290,200,150,100,50]) #different colours: magenta-green; yellow-dark blue; red-light blue  
+        #self.colour_orientations = np.array([330,285,190,150,105,30]) #paars-groen, donker blauw-bruin/geel, licht 
+		#blauw-oranje
+        self.colour_orientations = np.array([60,110,180,240,300,360]) #paars-groen, donker blauw-bruin/geel, licht 
+		
+        self.colour_luminances = np.array([0.49, 0.60, 0.57, 0.70, 0.70, 0.69) #luminance values from flicker task 
+ 
+		
         
         self.standard_vertices = [[standard_parameters['stim_fix_distance'],0], 
                             [standard_parameters['horizontal_stim_size'], standard_parameters['vertical_stim_size']/2.0], 
