@@ -133,7 +133,7 @@ class RLSession(EyelinkSession):
 
         self.scanner = scanner
         self.stim_orientations = np.linspace(0, 360, 6, endpoint = False)
-        self.colour_orientations = np.array([0,90,120,180,270,300]) #different colours: magenta-green; yellow-dark blue; red-light blue  
+        self.colour_orientations = np.array([330,290,200,150,100,50]) #different colours: magenta-green; yellow-dark blue; red-light blue  
         
         self.standard_vertices = [[standard_parameters['stim_fix_distance'],0], 
                             [standard_parameters['horizontal_stim_size'], standard_parameters['vertical_stim_size']/2.0], 

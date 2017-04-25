@@ -73,7 +73,7 @@ class RLSessionColor(RLSession):
                 orientation_2 = (self.stim_orientations[this_orientation] + 180)%360
 
                 color_1 = (np.pi/180.0) * self.colour_orientations[self.probs_to_stims_this_subject[i][0]] #use other orientations than stim_orientations 
-                color_2 = fmod(color_1 + np.pi, 2*np.pi)
+                color_2 = (np.pi/180.0) * self.colour_orientations[(self.probs_to_stims_this_subject[i][0]+3)%6] # fmod(color_1 + np.pi, 2*np.pi)
 
                 #define high reward orientation
                 if reward_probability_1 > reward_probability_2:
@@ -89,8 +89,8 @@ class RLSessionColor(RLSession):
 
                 params.update(
                         {   
-                        'color_1': color_1 + np.pi/16, 
-                        'color_2': color_2 + np.pi/16, 
+                        'color_1': color_1, 
+                        'color_2': color_2, 
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
@@ -165,8 +165,8 @@ class RLSessionColor(RLSession):
 
                 params.update(
                         {   
-                        'color_1': (np.pi/180.0) * color_1 + np.pi/16, 
-                        'color_2': (np.pi/180.0) * color_2 + np.pi/16, 
+                        'color_1': (np.pi/180.0) * color_1, 
+                        'color_2': (np.pi/180.0) * color_2, 
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
@@ -219,7 +219,7 @@ class RLSessionColor(RLSession):
 
                     params.update(
                             {   
-                            'color_1': color_1 + np.pi/16, 
+                            'color_1': color_1, 
                             'color_2': 0, 
                             'reward_probability_1': 0, 
                             'reward_probability_2': 0,
