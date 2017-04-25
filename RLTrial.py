@@ -40,7 +40,7 @@ class RLTrial(Trial):
             self.session.fixation.setColor((1,1,1))
             self.session.fixation_outer_rim.setColor(self.session.background_color)
             self.session.RL_stim_1.draw()
-            if self.parameters['orientation_2'] >= 0:
+            if self.parameters['color_2_lum'] != 0:
                 self.session.RL_stim_2.draw()
         elif self.phase == 5:
             if self.parameters['correct'] == -1:

@@ -1,5 +1,6 @@
 
 from __future__ import division
+import numpy as np
 
 # standard parameters
 standard_parameters = {
@@ -69,8 +70,10 @@ full_screen = True
 FGC = (0,0,0)
 BGC = (255*0.5,255*0.5,255*0.5) # this is converted to -1<->1 in Session
 
-xyz_whitepoint_norm  = [95.11, 100.00, 108.43] 
-gamma = 2.20
+# xyz_whitepoint_norm  = [95.11, 100.00, 108.43] 
+# gamma = 2.20
+colour_orientations = np.array([60,110,180,240,290,360])                #HSV: yellow/dark blue, green/magenta, light blue/red
+colour_luminances = np.array([0.49, 0.60, 0.57, 0.70, 0.70, 0.69])      #luminance values from flicker task for each of above colors
 
 
 # K2D-38 (all in cm):

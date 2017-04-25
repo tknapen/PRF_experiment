@@ -72,18 +72,18 @@ class RLSessionColor(RLSession):
                 orientation_1 = self.stim_orientations[this_orientation]
                 orientation_2 = (self.stim_orientations[this_orientation] + 180)%360
 
+                # old CIElab code
                 #color_1 = (np.pi/180.0) * self.colour_orientations[self.probs_to_stims_this_subject[i][0]] #use other orientations than stim_orientations
-                color_1 = self.colour_orientations[self.probs_to_stims_this_subject[i][0]] #use other orientations than stim_orientations
-                print ('color 1:', color_1)
-                color_1_lum = self.colour_luminances[self.probs_to_stims_this_subject[i][0]] 			
-								
                 #color_2 = (np.pi/180.0) * self.colour_orientations[(self.probs_to_stims_this_subject[i][0]+3)%6] # fmod(color_1 + np.pi, 2*np.pi)
-                color_2 = self.colour_orientations[self.probs_to_stims_this_subject[i][1]] # fmod(color_1 + np.pi, 2*np.pi)
+
+                color_1 = colour_orientations[self.probs_to_stims_this_subject[i][0]] #use other orientations than stim_orientations
+                color_1_lum = colour_luminances[self.probs_to_stims_this_subject[i][0]] 			
+								
+                color_2 = colour_orientations[(self.probs_to_stims_this_subject[i][0]+3)%6] # fmod(color_1 + np.pi, 2*np.pi)
+                color_2_lum = colour_luminances[(self.probs_to_stims_this_subject[i][0]+3)%6]           
+
+                print ('color 1:', color_1)
                 print ('color 2:', color_2)
-
-                color_2_lum = self.colour_luminances[self.probs_to_stims_this_subject[i][1]] 			
-
-
 
                 #define high reward orientation
                 if reward_probability_1 > reward_probability_2:
@@ -161,8 +161,12 @@ class RLSessionColor(RLSession):
                 orientation_1 = self.stim_orientations[this_orientation]
                 orientation_2 = (self.stim_orientations[this_orientation] + 180)%360
 
-                color_1 = self.colour_orientations[combinations[i][0]] #use other orientations than self.stim_orientations
-                color_2 = self.colour_orientations[combinations[i][1]] #use other orientations than self.stim_orientations
+                color_1 = colour_orientations[combinations[i][0]] #use other orientations than self.stim_orientations
+                color_2 = colour_orientations[combinations[i][1]] #use other orientations than self.stim_orientations
+
+                color_1_lum = colour_luminances[combinations[i][0]]             
+                color_2_lum = colour_luminances[combinations[i][1]]             
+
 
                 if reward_probability_1 > reward_probability_2:
                     if orientation_1 in (240,180,120):
@@ -177,8 +181,10 @@ class RLSessionColor(RLSession):
 
                 params.update(
                         {   
-                        'color_1': (np.pi/180.0) * color_1, 
-                        'color_2': (np.pi/180.0) * color_2, 
+                        'color_1': color_1, 
+                        'color_2': color_2, 
+                        'color_1_lum': color_1_lum,
+                        'color_2_lum': color_2_lum,
                         'reward_probability_1': reward_probability_1, 
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
@@ -227,12 +233,15 @@ class RLSessionColor(RLSession):
                     orientation_2 = -1
                     HR_orientation = orientation_1
 
-                    color_1 = (np.pi / 180.0) * self.colour_orientations[j] #use other colours than self.stim_orientations
+                    color_1 = colour_orientations[j]    #use other colours than self.stim_orientations
+                    color_1_lum = colour_luminances[j]
 
                     params.update(
                             {   
                             'color_1': color_1, 
                             'color_2': 0, 
+                            'color_1_lum': color_1_lum,
+                            'color_2_lum': 0,
                             'reward_probability_1': 0, 
                             'reward_probability_2': 0,
                             'orientation_1': orientation_1,
