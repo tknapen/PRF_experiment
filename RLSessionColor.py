@@ -82,9 +82,6 @@ class RLSessionColor(RLSession):
                 color_2 = colour_orientations[(self.probs_to_stims_this_subject[i][0]+3)%6] # fmod(color_1 + np.pi, 2*np.pi)
                 color_2_lum = colour_luminances[(self.probs_to_stims_this_subject[i][0]+3)%6]           
 
-                print ('color 1:', color_1)
-                print ('color 2:', color_2)
-
                 #define high reward orientation
                 if reward_probability_1 > reward_probability_2:
                     if orientation_1 in (240,180,120):

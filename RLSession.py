@@ -155,7 +155,7 @@ class RLSession(EyelinkSession):
         self.RL_stim_2 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=0, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=180 )
 
         self.pos_FB_stim = visual.TextStim(self.screen, text = '+', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [-1,0.25,-1], opacity = 1.0)
-        self.neg_FB_stim = visual.TextStim(self.screen, text = 'x', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [0.5,-1,-1], opacity = 1.0)
+        self.neg_FB_stim = visual.TextStim(self.screen, text = 'x', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [0.45,-1,-1], opacity = 1.0)
         self.no_FB_stim = visual.TextStim(self.screen, text = 'miss', height=standard_parameters['feedback_height'], pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset']+standard_parameters['feedback_height']/10.0)), color = [1,-1,-1], opacity = 1.0)
 
 
