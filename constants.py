@@ -1,5 +1,6 @@
 
 from __future__ import division
+import numpy as np
 
 # standard parameters
 standard_parameters = {
@@ -28,13 +29,13 @@ standard_parameters = {
     'stim_fix_distance':                          10.0,
 
     # stimulus variables:
-    'feedback_height':                            65,
+    'feedback_height':                            50,
     'win_amount':                                 0.1,
     'loss_amount':                                0,
 
     # timing variables:
     'fix_alert_exp_mean':                         0.125,
-    'response_feedback_exp_mean':                 0.5,
+    'response_feedback_exp_mean':                 0.4,
     'iti_exp_mean':                               2.0,
 
     'TR':                                         0.945,  
@@ -69,8 +70,10 @@ full_screen = True
 FGC = (0,0,0)
 BGC = (255*0.5,255*0.5,255*0.5) # this is converted to -1<->1 in Session
 
-xyz_whitepoint_norm  = [95.11, 100.00, 108.43] 
-gamma = 2.20
+# xyz_whitepoint_norm  = [95.11, 100.00, 108.43] 
+# gamma = 2.20
+colour_orientations = np.array([60,110,180,240,290,360])                #HSV: yellow/dark blue, green/magenta, light blue/red
+colour_luminances = np.array([0.6, 0.58, 0.5, 0.63, 0.65, 0.67]) #luminance values from flicker task for each of above colors
 
 
 # K2D-38 (all in cm):
