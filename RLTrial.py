@@ -89,7 +89,7 @@ class RLTrial(Trial):
                             # do we even need an answer?
                             self.parameters['rt'] = self.session.clock.getTime() - self.fixation_signal_time
                             self.parameters['answer'] = self.session.response_button_signs[ev]
-                            self.parameters['correct'] = int(self.parameters['HR_orientation'] == self.parameters['answer'])
+                            self.parameters['correct'] = int(self.parameters['HR_orientation'] == self.parameters['answer'])  
                             if self.session.response_button_signs[ev] not in [-1,1]:
                                 self.parameters['correct'] = -1
                             # feedback bookkeeping
@@ -116,6 +116,13 @@ class RLTrial(Trial):
                                     self.parameters['reward_gained'] = standard_parameters['win_amount']
                                     self.parameters['reward_lost'] = 0.0
                                     self.session.reward_counter += standard_parameters['win_amount']
+                            #register correct counter for test phase 
+                            elif self.session.train_test == 'test': 
+                                if (self.parameters['correct'] == 1) & (self.parameters['feedback_if_HR_chosen'] == 1):
+                                    self.session.correct_counter += 1
+                                elif (self.parameters['correct'] == 1) & (self.parameters['feedback_if_HR_chosen'] == 0):
+                                    self.session.correct_counter += 1
+
                             #print self.parameters
 
                             # how much time remained in the response window?
