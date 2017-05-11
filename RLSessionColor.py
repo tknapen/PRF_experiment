@@ -82,17 +82,35 @@ class RLSessionColor(RLSession):
                 color_2 = colour_orientations[(self.probs_to_stims_this_subject[i][0]+3)%6] # fmod(color_1 + np.pi, 2*np.pi)
                 color_2_lum = colour_luminances[(self.probs_to_stims_this_subject[i][0]+3)%6]           
 
-                #define high reward orientation
-                if reward_probability_1 > reward_probability_2:
-                    if orientation_1 in (240,180,120):
-                        HR_orientation = -1
+                #define high reward orientation & current stimulus 
+                if reward_probability_1 > reward_probability_2: #reward prob 1 = 0.8, 0.7, 0.6
+                    #current stimulus presentation
+                    if reward_probability_1 == 0.8:         
+                        this_stim = 12                          #AB
+                    elif reward_probability_1 == 0.7:       
+                        this_stim = 34                          #CD
+                    else: 
+                        this_stim = 56                          #EF         
+                    #current HR location 
+                    if orientation_1 in (240,180,120):          
+                        HR_orientation = -1                     #HR left 
                     else:
-                        HR_orientation = 1
-                else:
+                        HR_orientation = 1                      #HR right
+
+                else:                                           #reward prob 1 = 0.2, 0.3, 0.4
+                    #current stimulus presentation
+                    if reward_probability_1 == 0.2:         
+                        this_stim = 12                          #AB
+                    elif reward_probability_1 == 0.3:       
+                        this_stim = 34                          #CD
+                    else: 
+                        this_stim = 56                          #EF         
+                    #current HR location 
                     if orientation_1 in (240,180,120):
-                        HR_orientation = 1
-                    else:
-                        HR_orientation = -1
+                        HR_orientation = 1                      #HR right
+                     else:                                       
+                        HR_orientation = -1                     #HR left 
+
 
                 params.update(
                         {   
@@ -113,6 +131,7 @@ class RLSessionColor(RLSession):
                         'reward_gained': 0,
                         'reward_lost': 0,
                         'rt': 0,
+                        'this_stim': this_stim, 
                         }
                     )
 
@@ -164,17 +183,22 @@ class RLSessionColor(RLSession):
                 color_1_lum = colour_luminances[combinations[i][0]]             
                 color_2_lum = colour_luminances[combinations[i][1]]             
 
+                
+                if reward_probability_1 > reward_probability_2: #reward prob 1 = 0.8, 0.7, 0.6
+                   #current HR location 
+                    if orientation_1 in (240,180,120):          
+                        HR_orientation = -1                     #HR left 
+                    else:
+                        HR_orientation = 1                      #HR right
 
-                if reward_probability_1 > reward_probability_2:
+                else:                                           #reward prob 1 = 0.2, 0.3, 0.4
+                    #current stimulus presentation
                     if orientation_1 in (240,180,120):
-                        HR_orientation = -1
-                    else:
-                        HR_orientation = 1
-                else:
-                    if orientation_1 in (240,180,120):
-                        HR_orientation = 1
-                    else:
-                        HR_orientation = -1
+                        HR_orientation = 1                      #HR right
+                     else:                                       
+                        HR_orientation = -1                     #HR left 
+
+
 
                 params.update(
                         {   
@@ -195,6 +219,7 @@ class RLSessionColor(RLSession):
                         'reward_gained': 0,
                         'reward_lost': 0,
                         'rt': 0,
+                        'this_stim': this_stim,
                         }
                     )
 
