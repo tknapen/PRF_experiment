@@ -200,6 +200,6 @@ class RLTrial(Trial):
             # events and draw
             self.event()
             self.draw()
-    
+        # print self.parameters
         self.stop()
         

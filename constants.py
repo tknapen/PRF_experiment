@@ -14,7 +14,7 @@ standard_parameters = {
     'final_grace_period':                         20.,        # rest before and after experiment (GSR, fMRI) 
 
     'nr_stim_repetitions_per_run_train':          2,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
-    'nr_stim_repetitions_per_run_test':           8,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_test':           1,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_colour_mapper':  1,         # number of repetitions per run, of the 6x6-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_location_mapper':6,         # number of repetitions per run, of the 6-trial sequences that fully define the probabilities.
     
@@ -66,7 +66,7 @@ response_button_signs = {
 # screen_res = (1920,1080)
 # background_color = (0.5,0.5,0.5)#-0.75,-0.75,-0.75)
 
-full_screen = True
+full_screen = False
 FGC = (0,0,0)
 BGC = (255*0.5,255*0.5,255*0.5) # this is converted to -1<->1 in Session
 
