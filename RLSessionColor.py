@@ -69,20 +69,23 @@ class RLSessionColor(RLSession):
 
                 feedback_if_HR_chosen = feedback[j, i]
 
-                reward_probability_1 = self.reward_probs[self.probs_to_stims_this_subject[i][0], int((self.probs_to_stims_this_subject[i][1]+1)/2)]
-                reward_probability_2 = self.reward_probs[self.probs_to_stims_this_subject[i][0], int((-self.probs_to_stims_this_subject[i][1]+1)/2)]
-
+                # random orientation
                 this_orientation = np.random.randint(0,6)
                 orientation_1 = self.stim_orientations[this_orientation]
                 orientation_2 = (self.stim_orientations[this_orientation] + 180)%360
 
-                color_1 = colour_orientations[self.probs_to_stims_this_subject[i][0]] #use other orientations than stim_orientations
-                color_1_lum = colour_luminances[self.probs_to_stims_this_subject[i][0]]             
+                # colors from self.probs_to_stims_this_subject, shuffled per pair by the second item
+                color_1 = colour_orientations[::self.probs_to_stims_this_subject[i][1]][self.probs_to_stims_this_subject[i][0]] #use other orientations than stim_orientations
+                color_1_lum = colour_orientations[::self.probs_to_stims_this_subject[i][1]][colour_luminances[self.probs_to_stims_this_subject[i][0]]             
                             
-                color_2 = colour_orientations[(self.probs_to_stims_this_subject[i][0]+3)%6] # fmod(color_1 + np.pi, 2*np.pi)
-                color_2_lum = colour_luminances[(self.probs_to_stims_this_subject[i][0]+3)%6]           
+                color_2 = colour_orientations[::self.probs_to_stims_this_subject[i][1]][(self.probs_to_stims_this_subject[i][0]+3)%6] # fmod(color_1 + np.pi, 2*np.pi)
+                color_2_lum = colour_luminances[::self.probs_to_stims_this_subject[i][1]][(self.probs_to_stims_this_subject[i][0]+3)%6] 
 
-                #define high reward orientation & current stimulus 
+                # given this setup for colors and orientations, the reward probabilities are fixed.
+                reward_probability_1 = self.reward_probs[i,0]
+                reward_probability_2 = self.reward_probs[i,1]
+
+                # define high reward orientation & current stimulus 
                 if reward_probability_1 > reward_probability_2: #reward prob 1 = 0.8, 0.7, 0.6
                     #current HR location 
                     if orientation_1 in (240,180,120):          
@@ -120,10 +123,10 @@ class RLSessionColor(RLSession):
 
                 self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
                 self.trial_counter += 1
-        pd.set_option('display.max_columns', None)
-        print pd.DataFrame([t.parameters for t in self.trials]).head(30)
-        self.screen.close()
-        shell()
+        # pd.set_option('display.max_columns', None)
+        # print pd.DataFrame([t.parameters for t in self.trials]).head(30)
+        # self.screen.close()
+        # shell()
         self.shuffle_trials()
 
         this_instruction_string = """Two colours will appear simultaneously on the computer screen. \nOne colour will be rewarded more often and the other will be rewarded less often, \nBUT at first you won't know which is which! \nThere is no ABSOLUTE right answer, \nbut some colours will have a higher chance of giving you reward. \nTry to pick the colour that you find to have the highest chance of giving reward! \nCorrect choices will be rewarded with 0.10 points, incorrect responses receive no points.\n\nPress the spacebar to start"""
