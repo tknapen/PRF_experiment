@@ -33,20 +33,12 @@ class RLSessionColor(RLSession):
     def create_training_trials(self):
         """docstring for prepare_trials(self):"""
 
-        # ranges
-        # amount_of_colors = range(6) 
-        # self.hues = (np.linspace(0,1,len(amount_of_colors), endpoint=False)).reshape(2,3).T
-        self.reward_probs = np.array([[0.80,0.20], [0.70,0.30], [0.60,0.40]])       #reward probability sets  
-
         self.positions_for_subject_number()
         #correct responses 
         AB_correct = np.array(np.r_[np.ones(8), np.zeros(2)]) #80:20 chance to get positive feedback 
         CD_correct = np.array(np.r_[np.ones(7), np.zeros(3)]) #70:30 chance to get positive feedback 
         EF_correct = np.array(np.r_[np.ones(6), np.zeros(4)]) #60:40 chance to get positive feedback  
-        #correct responses 
-        # AB_correct = np.ones(10)
-        # CD_correct = np.ones(10)
-        # EF_correct = np.ones(10)
+
         for responses in ([AB_correct, CD_correct, EF_correct]): 
             np.random.shuffle(responses)
         feedback = np.vstack([np.array([AB_correct, CD_correct, EF_correct]).T for i in range(standard_parameters['nr_stim_repetitions_per_run_train'])]) 
@@ -71,19 +63,23 @@ class RLSessionColor(RLSession):
 
                 # random orientation
                 this_orientation = np.random.randint(0,6)
-                orientation_1 = self.stim_orientations[this_orientation]
-                orientation_2 = (self.stim_orientations[this_orientation] + 180)%360
+                orientation_1 = stim_orientations[this_orientation]
+                orientation_2 = (stim_orientations[this_orientation] + 180)%360
 
                 # colors from self.probs_to_stims_this_subject, shuffled per pair by the second item
-                color_1 = colour_orientations[::self.probs_to_stims_this_subject[i][1]][self.probs_to_stims_this_subject[i][0]] #use other orientations than stim_orientations
-                color_1_lum = colour_orientations[::self.probs_to_stims_this_subject[i][1]][colour_luminances[self.probs_to_stims_this_subject[i][0]]             
+                order = self.probs_to_stims_this_subject[i][1]
+                high_color_index = self.probs_to_stims_this_subject[i][0]
+                low_color_index = (self.probs_to_stims_this_subject[i][0] + 3)%6
+
+                color_1 = colour_orientations[::order][high_color_index] #use other orientations than stim_orientations
+                color_1_lum = colour_luminances[::order][high_color_index] #use other orientations than stim_orientations
                             
-                color_2 = colour_orientations[::self.probs_to_stims_this_subject[i][1]][(self.probs_to_stims_this_subject[i][0]+3)%6] # fmod(color_1 + np.pi, 2*np.pi)
-                color_2_lum = colour_luminances[::self.probs_to_stims_this_subject[i][1]][(self.probs_to_stims_this_subject[i][0]+3)%6] 
+                color_2 = colour_orientations[::order][low_color_index] # fmod(color_1 + np.pi, 2*np.pi)
+                color_2_lum = colour_luminances[::order][low_color_index] 
 
                 # given this setup for colors and orientations, the reward probabilities are fixed.
-                reward_probability_1 = self.reward_probs[i,0]
-                reward_probability_2 = self.reward_probs[i,1]
+                reward_probability_1 = reward_probs[i,0]
+                reward_probability_2 = reward_probs[i,1]
 
                 # define high reward orientation & current stimulus 
                 if reward_probability_1 > reward_probability_2: #reward prob 1 = 0.8, 0.7, 0.6
@@ -137,7 +133,7 @@ class RLSessionColor(RLSession):
         # ranges
         # amount_of_colors = range(6) 
         # self.hues = (np.linspace(0,1,len(amount_of_colors), endpoint=False)).reshape(2,3).T
-        self.reward_probs = np.array([[0.80,0.20], [0.70,0.30], [0.60,0.40]])  #reward probability sets  
+        reward_probs = np.array([[0.80,0.20], [0.70,0.30], [0.60,0.40]])  #reward probability sets  
 
         self.positions_for_subject_number()
 
@@ -145,11 +141,11 @@ class RLSessionColor(RLSession):
 
         self.standard_parameters = standard_parameters              
 
-        # color_rp_relations
+        # color_rp_relations, as defined in create_training_trials
         rp_color_relations = np.concatenate([
         [
             [
-                self.reward_probs[i,0], 
+                reward_probs[i,0], 
                 colour_orientations[::self.probs_to_stims_this_subject[i][1]][self.probs_to_stims_this_subject[i][0]]
             ] for i in range(3)],
         [
@@ -172,8 +168,8 @@ class RLSessionColor(RLSession):
                 # trial_phase_durations[6] += np.random.randn()*1.0 #SD 0.1 geeft relatief stabiel feedback interval rond 3 seconde
 
                 feedback_if_HR_chosen = 0
-                color_1 = colour_orientations[combinations[i][0]] #use other orientations than self.stim_orientations
-                color_2 = colour_orientations[combinations[i][1]] #use other orientations than self.stim_orientations
+                color_1 = colour_orientations[combinations[i][0]] #use other orientations than stim_orientations
+                color_2 = colour_orientations[combinations[i][1]] #use other orientations than stim_orientations
 
                 color_1_lum = colour_luminances[combinations[i][0]]             
                 color_2_lum = colour_luminances[combinations[i][1]]   
@@ -183,8 +179,8 @@ class RLSessionColor(RLSession):
                 reward_probability_2 = rp_color_relations[rp_color_relations[:,1] == color_2, 0]
 
                 this_orientation = np.random.randint(0,6)
-                orientation_1 = self.stim_orientations[this_orientation]
-                orientation_2 = (self.stim_orientations[this_orientation] + 180)%360
+                orientation_1 = stim_orientations[this_orientation]
+                orientation_2 = (stim_orientations[this_orientation] + 180)%360
 
                 if reward_probability_1 > reward_probability_2: #reward prob 1 = 0.8, 0.7, 0.6
                    #current HR location 
@@ -225,8 +221,8 @@ class RLSessionColor(RLSession):
                 self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
                 self.trial_counter += 1
 
-        pd.set_option('display.max_columns', None)
-        print pd.DataFrame([t.parameters for t in self.trials]).head(15)
+        # pd.set_option('display.max_columns', None)
+        # print pd.DataFrame([t.parameters for t in self.trials]).head(15)
 
         self.shuffle_trials()
 
@@ -242,8 +238,8 @@ class RLSessionColor(RLSession):
         self.trials = []
 
         self.trial_counter = 0
-        for i in range(len(self.stim_orientations)):        #6 orientations     
-            for j in range(len(self.stim_orientations)):    #6 colors 
+        for i in range(len(stim_orientations)):        #6 orientations     
+            for j in range(len(stim_orientations)):    #6 colors 
                 for k in range(standard_parameters['nr_stim_repetitions_per_run_colour_mapper']):              
                     params = self.standard_parameters
                     # randomize phase durations NOT!
@@ -253,11 +249,11 @@ class RLSessionColor(RLSession):
                     trial_phase_durations[6] = 0.75 # np.random.randn()*1.0 #SD 0.1 geeft relatief stabiel feedback interval rond 3 seconde
 
                     feedback_if_HR_chosen = 1
-                    orientation_1 = self.stim_orientations[i]
+                    orientation_1 = stim_orientations[i]
                     orientation_2 = -1
                     HR_orientation = orientation_1
 
-                    color_1 = colour_orientations[j]    #use other colours than self.stim_orientations
+                    color_1 = colour_orientations[j]    #use other colours than stim_orientations
                     color_1_lum = colour_luminances[j]
 
                     params.update(

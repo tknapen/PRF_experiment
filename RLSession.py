@@ -20,11 +20,11 @@ import ColorTools as ct
 
 
 try: 
-	import appnope
-	appnope.nope()
+    import appnope
+    appnope.nope()
 except: 
-	print 'APPNOPE NOT ACTIVE!'
-	
+    print 'APPNOPE NOT ACTIVE!'
+    
 class RLSession(EyelinkSession):
     def __init__(self, subject_number, index_number, scanner, tracker_on, experiment_name):
         super(RLSession, self).__init__( subject_number, index_number )
@@ -131,16 +131,8 @@ class RLSession(EyelinkSession):
         self.response_button_signs = response_button_signs; 
         self.subject_number = int(subject_number)
 
-        self.scanner = scanner
-        self.stim_orientations = np.linspace(0, 360, 6, endpoint = False)
-        #self.colour_orientations = np.array([330,285,190,150,105,30]) #CIELAB: paars/groen, donker blauw/bruin-geel, licht 
-		#blauw/oranje
-        self.colour_orientations = np.array([60,110,180,240,290,360]) #HSV: geel/donker blauw, groen/magenta, licht blauw/rood
-		
-        self.colour_luminances = np.array([0.49, 0.60, 0.57, 0.70, 0.70, 0.69]) #luminance values from flicker task 
- 
-		
-        
+        self.scanner = scanner        
+
         self.standard_vertices = [[standard_parameters['stim_fix_distance'],0], 
                             [standard_parameters['horizontal_stim_size'], standard_parameters['vertical_stim_size']/2.0], 
                             [standard_parameters['horizontal_stim_size'], -standard_parameters['vertical_stim_size']/2.0]]
