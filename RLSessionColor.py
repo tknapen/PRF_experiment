@@ -61,6 +61,10 @@ class RLSessionColor(RLSession):
 
                 feedback_if_HR_chosen = feedback[j, i]
 
+                # the reward probabilities are fixed.
+                reward_probability_1 = reward_probs[i,0]
+                reward_probability_2 = reward_probs[i,1]
+
                 # random orientation
                 this_orientation = np.random.randint(0,6)
                 orientation_1 = stim_orientations[this_orientation]
@@ -76,10 +80,6 @@ class RLSessionColor(RLSession):
                             
                 color_2 = colour_orientations[::order][low_color_index] # fmod(color_1 + np.pi, 2*np.pi)
                 color_2_lum = colour_luminances[::order][low_color_index] 
-
-                # given this setup for colors and orientations, the reward probabilities are fixed.
-                reward_probability_1 = reward_probs[i,0]
-                reward_probability_2 = reward_probs[i,1]
 
                 # define high reward orientation & current stimulus 
                 if reward_probability_1 > reward_probability_2: #reward prob 1 = 0.8, 0.7, 0.6
