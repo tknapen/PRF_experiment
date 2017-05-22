@@ -204,6 +204,17 @@ class RLSession(EyelinkSession):
         
         #pick one combination 
         self.probs_to_stims_this_subject = probs_to_stims[self.subject_number] #48 combinations of 8 reward prob orderings and 6 color set orderings
+
+        # and implement it in terms of colors
+        self.original_color_pairs = [colour_orientations[x] for x in [[0,3],[1,4],[2,5]]]
+        self.original_color_luminances = [colour_luminances[x] for x in [[0,3],[1,4],[2,5]]]
+
+        self.ordered_color_pairs = np.array([self.original_color_pairs[x[0]][::x[-1]] for x in self.probs_to_stims_this_subject])
+        self.ordered_color_luminances = np.array([self.original_color_luminances[x[0]][::x[-1]] for x in self.probs_to_stims_this_subject])
+
+        self.reward_probs = np.array([[0.80,0.20], [0.70,0.30], [0.60,0.40]])
+
+        self.color_rp_associations = np.array([self.ordered_color_pairs, self.reward_probs]).T.reshape([6,2])
         
 
     def setup_empty_trials(self):
