@@ -120,10 +120,10 @@ class RLSessionColor(RLSession):
 
                 self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
                 self.trial_counter += 1
-        pd.set_option('display.max_columns', None)
-        print pd.DataFrame([t.parameters for t in self.trials]).head(30)
-        self.screen.close()
-        shell()
+        # pd.set_option('display.max_columns', None)
+        # print pd.DataFrame([t.parameters for t in self.trials]).head(30)
+        # self.screen.close()
+        # shell()
         self.shuffle_trials()
 
         this_instruction_string = """Two colours will appear simultaneously on the computer screen. \nOne colour will be rewarded more often and the other will be rewarded less often, \nBUT at first you won't know which is which! \nThere is no ABSOLUTE right answer, \nbut some colours will have a higher chance of giving you reward. \nTry to pick the colour that you find to have the highest chance of giving reward! \nCorrect choices will be rewarded with 0.10 points, incorrect responses receive no points.\n\nPress the spacebar to start"""
@@ -212,8 +212,8 @@ class RLSessionColor(RLSession):
                 self.trials.append(RLTrial(parameters = params, phase_durations = np.array(trial_phase_durations), session = self, screen = self.screen, tracker = self.tracker))
                 self.trial_counter += 1
 
-        pd.set_option('display.max_columns', None)
-        print pd.DataFrame([t.parameters for t in self.trials]).head(15)
+        # pd.set_option('display.max_columns', None)
+        # print pd.DataFrame([t.parameters for t in self.trials]).head(15)
 
         self.shuffle_trials()
 
