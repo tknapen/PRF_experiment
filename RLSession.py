@@ -166,7 +166,7 @@ class RLSession(EyelinkSession):
         elif self.index_number == 1:
             self.train_test = 'test'
             self.create_test_trials()
-        elif self.index_number == -1:
+        elif self.index_number == 2:
             self.train_test = 'train' 
             self.create_mapper_trials()
 

@@ -54,7 +54,7 @@ class RLTrial(Trial):
                     self.session.neg_FB_stim.draw()
                 elif (self.parameters['correct'] == 0) & (self.parameters['feedback_if_HR_chosen'] == 0):
                     self.session.pos_FB_stim.draw()
-            elif self.session.index_number in (-1,1):
+            elif self.session.index_number in (1,2):
                 self.session.fixation_outer_rim.draw()
                 self.session.fixation_rim.draw()
                 self.session.fixation.draw()
@@ -128,7 +128,7 @@ class RLTrial(Trial):
                             # how much time remained in the response window?
                             # response_time_remainder = self.phase_durations[3] - ( self.stimulus_time - self.fixation_signal_time )
                             # self.phase_durations[6] += response_time_remainder
-                            if self.session.index_number != -1: # do not switch the stimulus off for mapper
+                            if self.session.index_number != 2: # do not switch the stimulus off for mapper
                                 self.phase_forward()
                                                                                                                  
             super(RLTrial, self).key_event( ev )

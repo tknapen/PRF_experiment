@@ -13,8 +13,8 @@ standard_parameters = {
     'initial_grace_period':                       12.,        # rest before and after experiment (GSR, fMRI) 
     'final_grace_period':                         20.,        # rest before and after experiment (GSR, fMRI) 
 
-    'nr_stim_repetitions_per_run_train':          2,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
-    'nr_stim_repetitions_per_run_test':           1,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_train':          3,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_test':           8,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_colour_mapper':  1,         # number of repetitions per run, of the 6x6-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_location_mapper':6,         # number of repetitions per run, of the 6-trial sequences that fully define the probabilities.
     
@@ -38,7 +38,7 @@ standard_parameters = {
     'response_feedback_exp_mean':                 0.4,
     'iti_exp_mean':                               2.0,
 
-    'TR':                                         0.945,  
+    'TR':                                         1.15,  
     'stimulus_col_min':                           0,       # start point on color circle
     'stimulus_col_max':                           6,       # end point on color circle
     'stimulus_col_steps':                         6,       # how many steps through colorspace
