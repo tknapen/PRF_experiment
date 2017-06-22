@@ -31,7 +31,6 @@ def df_from_pickles(filename_list, selected_columns=['orientation_1', 'orientati
                 'reward_probability_2', 'HR_orientation', 'answer', 'correct', 'reward', 'feedback_if_HR_chosen']):
     return pd.concat([read_pickle_file(f, selected_columns) for f in sorted(filename_list)])
 
-
 #####################################################################################################
 #####
 #####   Across subjects

@@ -96,7 +96,7 @@ class RLSessionColor(RLSession):
                         'color_2': color_2,
                         'color_1_lum': color_1_lum,
                         'color_2_lum': color_2_lum,
-                        'reward_probability_1': reward_probability_1, 
+                        'reward_probability_1': reward_probability_1,
                         'reward_probability_2': reward_probability_2,
                         'orientation_1': orientation_1,
                         'orientation_2': orientation_2,
