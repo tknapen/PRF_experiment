@@ -121,7 +121,7 @@ class RLSessionColor(RLSession):
         self.shuffle_trials()
 
         this_instruction_string = """Two colours will appear simultaneously on the computer screen. \nOne colour will be rewarded more often and the other will be rewarded less often, \nBUT at first you won't know which is which! \nThere is no ABSOLUTE right answer, \nbut some colours will have a higher chance of giving you reward. \nTry to pick the colour that you find to have the highest chance of giving reward! \nCorrect choices will be rewarded with 0.10 points, incorrect responses receive no points.\n\nPress the spacebar to start"""
-        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
+        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 20, alignHoriz = 'center', wrapWidth = 1200)
 
 
     def create_test_trials(self):   
@@ -208,7 +208,7 @@ class RLSessionColor(RLSession):
         self.shuffle_trials()
 
         this_instruction_string = """It's time  to test what you've learned!\n During this set of trials you will NOT receive feedback (or rewards) to your responses. \nDuring this phase you will see new combinations of colours. \nPlease choose the colour that 'feels' more correct based on the training. \nIf you are not sure which one to pick, just go with your gut instinct! \n\nPress the spacebar to start..."""
-        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
+        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 20, alignHoriz = 'center', wrapWidth = 1200)
 
 
     def create_mapper_trials(self):   
@@ -264,9 +264,9 @@ class RLSessionColor(RLSession):
 
         self.shuffle_trials()
   
-        # this_instruction_string = """Respond as quickly as possible by pushing the correct button for the appearing stimulus."""
-        this_instruction_string = """"""
-        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
+        this_instruction_string = """Respond as quickly as possible by pushing the correct button for the side of the appearing stimulus."""
+        # this_instruction_string = """"""
+        self.instruction = visual.TextStim(self.screen, text = this_instruction_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 20, alignHoriz = 'center', wrapWidth = 1200)
 
     
 
