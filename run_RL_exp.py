@@ -13,7 +13,7 @@ except:
 
 def main():
     subject_nr = raw_input('Your subject_nr: ')
-    run_nr = int(raw_input('Run number: [0=training (fMRI & pupil), 1=test (fMRI & pupil), 2=mapper (fMRI only)] '))
+    run_nr = int(raw_input('Run number: [0=training (fMRI & pupil), 1=test (fMRI & pupil), 2=mapper (fMRI only)]'))
     scanner = 'n' # raw_input('Are you in the scanner (y/n)?: ')
     track_eyes = raw_input('Are you recording gaze (y/n)?: ')
     if track_eyes == 'y':

@@ -159,7 +159,7 @@ class RLSession(EyelinkSession):
             self.train_test = 'test'
             self.create_test_trials()
         elif self.index_number == 2:
-            self.train_test = 'test' 
+            self.train_test = 'train' 
             self.create_mapper_trials()
 
         # also define counters to run during the experiment
@@ -341,18 +341,13 @@ class RLSession(EyelinkSession):
                                 )
             print('NUMBER OF MISSED STIMULI THIS RUN:',self.slow_counter)
 
-        
         if self.slow_counter > standard_parameters['nr_slow_warning']:
             this_feedback_string += "\nThis means you missed the stimulus a lot - Please try to pay more attention."
 
-        self.feedback = visual.TextStim(self.screen, text = this_feedback_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 15, alignHoriz = 'center', wrapWidth = 1200)
-        
+        self.feedback = visual.TextStim(self.screen, text = this_feedback_string, font = 'Helvetica Neue', pos = (0, 100), italic = True, height = 20, alignHoriz = 'center', wrapWidth = 1200)
         self.feedback.draw()
         self.screen.flip()
         time_module.sleep(5)
 
 
         self.close()
-        
-    
-
