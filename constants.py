@@ -13,16 +13,18 @@ standard_parameters = {
     'initial_grace_period':                       12.,        # rest before and after experiment (GSR, fMRI) 
     'final_grace_period':                         20.,        # rest before and after experiment (GSR, fMRI) 
 
-    'nr_stim_repetitions_per_run_train':          2,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
-    'nr_stim_repetitions_per_run_test':           1,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_train':          3,         # number of repetitions per run, of the 30-trial sequences that fully define the probabilities.
+    'nr_stim_repetitions_per_run_test':           8,         # number of repetitions per run, of the 15-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_colour_mapper':  1,         # number of repetitions per run, of the 6x6-trial sequences that fully define the probabilities.
     'nr_stim_repetitions_per_run_location_mapper':6,         # number of repetitions per run, of the 6-trial sequences that fully define the probabilities.
     
 
     ## spatial dimensions:
-    'eyelink_calib_size':                         0.9,       # portion of screen heigth    
+    'eyelink_calib_size':                         0.35,       # portion of screen heigth    
     'x_offset':                                   0.0,
     'y_offset':                                   0.0,
+    'eyelink_n_calib_points':                     9,            # 5 or 9
+    'eyelink_sample_rate':                        500,
 
     'vertical_stim_size':                         200.0,
     'horizontal_stim_size':                       2000.0,
@@ -38,7 +40,7 @@ standard_parameters = {
     'response_feedback_exp_mean':                 0.4,
     'iti_exp_mean':                               2.0,
 
-    'TR':                                         0.945,  
+    'TR':                                         1.15,  
     'stimulus_col_min':                           0,       # start point on color circle
     'stimulus_col_max':                           6,       # end point on color circle
     'stimulus_col_steps':                         6,       # how many steps through colorspace
@@ -58,9 +60,14 @@ standard_phase_durations = [-0.000001, -0.000001, 0.375, 3.0, 0.5, 1.0, 0.0]
 #         'i':300
 #         }
 
+# response_button_signs = {
+#         'b':-1,
+#         'y':1
+#         }
+
 response_button_signs = {
-        'j':-1,
-        'k':1
+        'e':-1,
+        'w':1
         }
 
 # screen_res = (1920,1080)
@@ -68,7 +75,7 @@ response_button_signs = {
 
 full_screen = False
 FGC = (0,0,0)
-BGC = (255*0.5,255*0.5,255*0.5) # this is converted to -1<->1 in Session
+BGC = (255*0.75,255*0.75,255*0.75) # this is converted to -1<->1 in Session
 
 # xyz_whitepoint_norm  = [95.11, 100.00, 108.43] 
 # gamma = 2.20
@@ -79,9 +86,9 @@ reward_probs = np.array([[0.80,0.20], [0.70,0.30], [0.60,0.40]])       #reward p
 
 
 # K2D-38 (all in cm):
-DISPSIZE = (1024,768)
-SCREENSIZE = (39.0,29.0)
-SCREENDIST = 60.0
+DISPSIZE = (1920,1080)
+SCREENSIZE = (70.0,40.0)
+SCREENDIST = 225.0
 #7T scan room (all in cm):
 #DISPSIZE = (1024,768)
 #DISPSIZE = (2560,1440)#(2560,1440)#(1280,720)#,1080)#(1024,768)#(1920,1080)#(2560,1440)

@@ -43,7 +43,7 @@ class RLSession(EyelinkSession):
             # if self.tracker_on:
             #     self.tracker_setup()
            # how many points do we want:
-            n_points = 9
+            n_points = standard_parameters['eyelink_n_calib_points']
 
             # order should be with 5 points: center-up-down-left-right
             # order should be with 9 points: center-up-down-left-right-leftup-rightup-leftdown-rightdown 
@@ -51,7 +51,7 @@ class RLSession(EyelinkSession):
             # so always: up->down or left->right
 
             # creat tracker
-            self.create_tracker(auto_trigger_calibration = 0, calibration_type = 'HV%d'%n_points, sample_rate = 1000)
+            self.create_tracker(auto_trigger_calibration = 0, calibration_type = 'HV%d'%n_points, sample_rate = standard_parameters['eyelink_sample_rate'])
 
             # it is setup to do a 9 or 5 point circular calibration, at reduced ecc
 
@@ -139,9 +139,9 @@ class RLSession(EyelinkSession):
         
         # and, stimuli that are identical across all trials
         # fixation point
-        self.fixation_outer_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=15, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = self.background_color, maskParams = {'fringeWidth':0.4})
-        self.fixation_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=12, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = (-1.0,-1.0,-1.0), maskParams = {'fringeWidth':0.4})
-        self.fixation = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=7, pos = np.array((standard_parameters['x_offset'],0.0)), color = (1, 1, 1), opacity = 1.0, maskParams = {'fringeWidth':0.4})
+        self.fixation_outer_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=25, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = self.background_color, maskParams = {'fringeWidth':0.4})
+        self.fixation_rim = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=18, pos = np.array((standard_parameters['x_offset'],standard_parameters['y_offset'])), color = (-1.0,-1.0,-1.0), maskParams = {'fringeWidth':0.4})
+        self.fixation = visual.PatchStim(self.screen, mask='raisedCos',tex=None, size=12, pos = np.array((standard_parameters['x_offset'],0.0)), color = (1, 1, 1), opacity = 1.0, maskParams = {'fringeWidth':0.4})
         
         self.RL_stim_1 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=0, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=0 )
         self.RL_stim_2 = visual.ShapeStim(win=self.screen, vertices=self.standard_vertices, closeShape=True, lineWidth=0, lineColor='white', lineColorSpace='rgb', fillColor='black', fillColorSpace='rgb', ori=180 )
@@ -158,8 +158,8 @@ class RLSession(EyelinkSession):
         elif self.index_number == 1:
             self.train_test = 'test'
             self.create_test_trials()
-        elif self.index_number == -1:
-            self.train_test = 'train' 
+        elif self.index_number == 2:
+            self.train_test = 'test' 
             self.create_mapper_trials()
 
         # also define counters to run during the experiment
@@ -334,7 +334,7 @@ class RLSession(EyelinkSession):
             print('TOTAL REWARD THIS RUN:',self.reward_counter + self.loss_counter)
             print('NUMBER OF MISSED STIMULI THIS RUN:',self.slow_counter)
 
-        elif self.index_number in (-1,1):
+        elif self.index_number in (1,2):
             this_feedback_string = """You missed the stimulus {sc} times out of {tr} trials.""".format(
                                 sc=self.slow_counter, 
                                 tr=len(self.trials)
